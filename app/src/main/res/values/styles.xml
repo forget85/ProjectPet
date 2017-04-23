@@ -8,4 +8,11 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="AppThemeWithNoTitle" parent="AppTheme">
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="SplashTheme" parent="AppThemeWithNoTitle">
+        <item name="android:background">@color/colorSplashBack</item>
+    </style>
 </resources>
