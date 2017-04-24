@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         android.support.v4.app.Fragment listFragment = new ListFragment();
         fragmentTransaction.add(R.id.fragment_container, listFragment);
-        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        //fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         fragmentTransaction.commit();
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);

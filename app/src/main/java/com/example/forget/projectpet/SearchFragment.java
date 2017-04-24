@@ -1,7 +1,6 @@
 package com.example.forget.projectpet;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,7 +13,7 @@ public class SearchFragment extends Fragment {
 
     private String mParam1;
     private String mParam2;
-    
+
     public SearchFragment() {
     }
 
