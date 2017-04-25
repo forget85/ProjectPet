@@ -1,12 +1,15 @@
 package com.example.forget.projectpet;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import junit.framework.Assert;
 
 import java.util.ArrayList;
 
@@ -58,5 +61,31 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewHolder>{
 
     public int getItemCount() {
         return listItems.size();
+    }
+}
+
+class ListViewItemDecoration extends RecyclerView.ItemDecoration{
+    private int dividerWidth;
+    private int dividerHeight;
+    private int columnCount;
+    public ListViewItemDecoration(int _columnCount, int _dividerWidth, int _dividerHeight){
+        dividerWidth = _dividerWidth;
+        dividerHeight = _dividerHeight;
+        columnCount = _columnCount;
+    }
+
+    public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+        super.getItemOffsets(outRect, view, parent, state);
+        int itemPosition = ((RecyclerView.LayoutParams) view.getLayoutParams()).getViewAdapterPosition();
+
+        outRect.bottom = dividerHeight;
+        outRect.left = dividerWidth;
+
+        Assert.assertTrue(0 < columnCount);
+        if(itemPosition % columnCount - 1 == 0) {
+            outRect.right = dividerWidth;
+        }
+
+        //onDraw로 그려주기
     }
 }

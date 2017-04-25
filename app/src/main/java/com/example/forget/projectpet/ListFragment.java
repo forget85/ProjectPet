@@ -40,31 +40,35 @@ public class ListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_list, container, false);
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list_view);
         recyclerView.setHasFixedSize(true);
+        final int columnCount = 2;
+        final int dividerWidth = 20;
+        final int dividerHeight = 20;
+        recyclerView.addItemDecoration(new ListViewItemDecoration(columnCount, dividerWidth, dividerHeight));
 
         ArrayList<ListItem> listItems = new ArrayList<>();
 
         listItems.add(new ListItem("상품1", "옥션"));
-        listItems.add(new ListItem("상품2", "옥션"));
-        listItems.add(new ListItem("상품3", "옥션"));
-        listItems.add(new ListItem("상품4", "옥션"));
-        listItems.add(new ListItem("상품5", "옥션"));
+        listItems.add(new ListItem("상품2", "지마켓"));
+        listItems.add(new ListItem("상품3", "11번가"));
+        listItems.add(new ListItem("상품4", "이베이"));
+        listItems.add(new ListItem("상품5", "네이버"));
         listItems.add(new ListItem("상품6", "옥션"));
-        listItems.add(new ListItem("상품7", "옥션"));
-        listItems.add(new ListItem("상품8", "옥션"));
+        listItems.add(new ListItem("상품7", "11번가"));
+        listItems.add(new ListItem("상품8", "지마켓"));
         listItems.add(new ListItem("상품9", "옥션"));
-        listItems.add(new ListItem("상품10", "옥션"));
-        listItems.add(new ListItem("상품11", "옥션"));
-        listItems.add(new ListItem("상품12", "옥션"));
+        listItems.add(new ListItem("상품10", "이베이"));
+        listItems.add(new ListItem("상품11", "11번가"));
+        listItems.add(new ListItem("상품12", "지마켓"));
         listItems.add(new ListItem("상품13", "옥션"));
         listItems.add(new ListItem("상품14", "옥션"));
-        listItems.add(new ListItem("상품15", "옥션"));
-        listItems.add(new ListItem("상품16", "옥션"));
-        listItems.add(new ListItem("상품17", "옥션"));
-        listItems.add(new ListItem("상품18", "옥션"));
-        listItems.add(new ListItem("상품19", "옥션"));
-        listItems.add(new ListItem("상품20", "옥션"));
+        listItems.add(new ListItem("상품15", "11번가"));
+        listItems.add(new ListItem("상품16", "지마켓"));
+        listItems.add(new ListItem("상품17", "네이버"));
+        listItems.add(new ListItem("상품18", "지마켓"));
+        listItems.add(new ListItem("상품19", "이베이"));
+        listItems.add(new ListItem("상품20", "11번가"));
 
-        recyclerView.setLayoutManager(new GridLayoutManager(context, 2));
+        recyclerView.setLayoutManager(new GridLayoutManager(context, columnCount));
         recyclerView.setAdapter(new ListViewAdapter(context, listItems));
         return view;
     }
