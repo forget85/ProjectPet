@@ -14,20 +14,20 @@ import junit.framework.Assert;
 import java.util.ArrayList;
 
 class ListViewHolder extends RecyclerView.ViewHolder{
-    public ImageView   productImageView;
-    public ImageView   saleImageView;
-    public ImageView   freeShippingImageView;
-    public ImageView   likeImageView;
-    public TextView    productTextView;
-    public TextView    shoppingMallTextView;
-    public TextView    priceTextView;
+    public ImageView    productImageView;
+    public TextView     saleTextView;
+    public TextView     freeShippingTextView;
+    public ImageView    likeImageView;
+    public TextView     productTextView;
+    public TextView     shoppingMallTextView;
+    public TextView     priceTextView;
 
     ListViewHolder(View itemView){
         super(itemView);
 
         productImageView = (ImageView) itemView.findViewById(R.id.product_image_view);
-        saleImageView = (ImageView) itemView.findViewById(R.id.sale_image_view);
-        freeShippingImageView = (ImageView) itemView.findViewById(R.id.free_shipping_image_view);
+        saleTextView = (TextView) itemView.findViewById(R.id.sale_text_view);
+        freeShippingTextView = (TextView) itemView.findViewById(R.id.free_shipping_text_view);
         likeImageView = (ImageView) itemView.findViewById(R.id.like_image_view);
         productTextView = (TextView) itemView.findViewById(R.id.product_name_text_view);
         shoppingMallTextView = (TextView) itemView.findViewById(R.id.shopping_mall_name_text_view);
