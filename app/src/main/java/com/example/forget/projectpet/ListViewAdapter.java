@@ -39,8 +39,11 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewHolder>{
     ArrayList<ListItem> listItems = new ArrayList<>();
     Context context;
 
-    ListViewAdapter(Context _context, ArrayList<ListItem> _listItems){
+    ListViewAdapter(Context _context){
         context = _context;
+    }
+
+    public void updateData(ArrayList<ListItem> _listItems){
         listItems = _listItems;
     }
 
@@ -85,7 +88,5 @@ class ListViewItemDecoration extends RecyclerView.ItemDecoration{
         if(itemPosition % columnCount - 1 == 0) {
             outRect.right = dividerWidth;
         }
-
-        //onDraw로 그려주기
     }
 }
