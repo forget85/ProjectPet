@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class ListFragment extends BaseFragment {
-    private ListFragmentModel listFragmentModel = new ListFragmentModel();
     private ListFragmentPresenter listFragmentPresenter = null;
 
     public View initView(LayoutInflater inflater, ViewGroup container){
@@ -16,9 +15,7 @@ public class ListFragment extends BaseFragment {
 
         initRecyclerView(recyclerView);
 
-        listFragmentModel.loadListData();
         listFragmentPresenter = new ListFragmentPresenter(context, recyclerView);
-        listFragmentPresenter.updateData(listFragmentModel.getData());
         return view;
     }
 
