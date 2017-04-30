@@ -98,7 +98,15 @@ public class MainActivityPresenter {
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        return actionBarDrawerToggle.onOptionsItemSelected(item);
+        if(item.getItemId() == R.id.search_menu) {
+            Toast.makeText(context, "search", Toast.LENGTH_SHORT).show();
+            return true;
+        }else if(item.getItemId() == R.id.filter_menu) {
+            Toast.makeText(context, "filter", Toast.LENGTH_SHORT).show();
+            return true;
+        }else {
+            return actionBarDrawerToggle.onOptionsItemSelected(item);
+        }
     }
 
     protected void onPostCreate(Bundle savedInstanceState) {

@@ -6,11 +6,14 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     MainActivityPresenter mainActivityPresenter = null;
+    boolean bShowFilter = false;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -39,11 +42,15 @@ public class MainActivity extends AppCompatActivity {
         drawerMenuListView.addFooterView(getLayoutInflater().inflate(R.layout.drawer_footer, null, false));
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
 
         mainActivityPresenter = new MainActivityPresenter(this, drawerLayout, drawerMenuListView);
 
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.action_bar, menu);
+        return true;
     }
 
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -57,9 +64,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(mainActivityPresenter.onOptionsItemSelected(item))
+        if (mainActivityPresenter.onOptionsItemSelected(item))
             return true;
-
         return super.onOptionsItemSelected(item);
     }
 
