@@ -8,8 +8,4 @@ public class LikeFragment extends BaseFragment {
     public View initView(LayoutInflater inflater, ViewGroup container){
         return inflater.inflate(R.layout.fragment_like, container, false);
     }
-
-    public String getFragmentTitle(){
-        return "Like";
-    }
 }

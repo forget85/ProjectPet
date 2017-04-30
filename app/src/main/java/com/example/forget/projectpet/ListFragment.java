@@ -28,8 +28,4 @@ public class ListFragment extends BaseFragment {
         recyclerView.addItemDecoration(new ListViewItemDecoration(columnCount, dividerWidth, dividerHeight));
         recyclerView.setLayoutManager(new GridLayoutManager(context, columnCount));
     }
-
-    public String getFragmentTitle(){
-        return "Home";
-    }
 }

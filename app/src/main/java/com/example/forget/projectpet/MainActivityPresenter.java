@@ -5,7 +5,8 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentManager;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.MenuItem;
@@ -77,16 +78,17 @@ public class MainActivityPresenter {
         drawerRightMenuListView.setAdapter(rightAdapter);
     }
 
-    public void addFragment(FragmentManager fragmentManager, BaseFragment fragment) {
-        android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+    public void addFragment(FragmentManager fragmentManager, Fragment fragment) {
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(R.id.fragment_container, fragment);
         fragmentTransaction.commit();
     }
 
-    public void changeFragment(FragmentManager fragmentManager, BaseFragment fragment) {
-        android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+    public void changeFragment(FragmentManager fragmentManager, Fragment fragment) {
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         fragmentTransaction.replace(R.id.fragment_container, fragment);
+        fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
 
@@ -95,7 +97,7 @@ public class MainActivityPresenter {
             return false;
 
         lastMenuItem = item;
-        BaseFragment fragment = null;
+        Fragment fragment = null;
         switch (item.getItemId()) {
             case R.id.navigation_home:
                 fragment = new ListFragment();
@@ -128,7 +130,6 @@ public class MainActivityPresenter {
             Toast.makeText(context, "search", Toast.LENGTH_SHORT).show();
             return true;
         }else if(item.getItemId() == R.id.filter_menu) {
-            Toast.makeText(context, "filter", Toast.LENGTH_SHORT).show();
             if(drawerLayout.isDrawerOpen(drawerRightMenuListView)) {
                 drawerLayout.closeDrawer(drawerRightMenuListView);
             }else {

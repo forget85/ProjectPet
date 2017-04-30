@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-           return mainActivityPresenter.onNavigationItemSelected(getSupportFragmentManager(), item);
+           return mainActivityPresenter.onNavigationItemSelected(getFragmentManager(), item);
         }
 
     };
@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
         initView();
 
-        mainActivityPresenter.addFragment(getSupportFragmentManager(), new ListFragment());
+        mainActivityPresenter.addFragment(getFragmentManager(), new ListFragment());
     }
 
     private void initView(){

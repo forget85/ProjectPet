@@ -8,8 +8,4 @@ public class SearchFragment extends BaseFragment {
     public View initView(LayoutInflater inflater, ViewGroup container){
         return inflater.inflate(R.layout.fragment_search, container, false);
     }
-
-    public String getFragmentTitle(){
-        return "Search";
-    }
 }
