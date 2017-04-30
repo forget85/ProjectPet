@@ -20,35 +20,61 @@ public class MainActivityPresenter {
     private DrawerLayout drawerLayout = null;
     private ActionBarDrawerToggle actionBarDrawerToggle = null;
     private MainActivityModel mainActivityModel = new MainActivityModel();
-    private ListView drawerMenuListView = null;
+    private ListView drawerLeftMenuListView = null;
+    private ListView drawerRightMenuListView = null;
+    private View lastDrawerView = null;
+
     private Context context;
 
-    MainActivityPresenter(Context _context, DrawerLayout _drawerLayout, ListView _drawerMenuListView) {
+    MainActivityPresenter(Context _context, DrawerLayout _drawerLayout, ListView _drawerLeftMenuListView, ListView _drawerRightMenuListView) {
         drawerLayout = _drawerLayout;
-        drawerMenuListView = _drawerMenuListView;
+        drawerLeftMenuListView = _drawerLeftMenuListView;
+        drawerRightMenuListView = _drawerRightMenuListView;
         context = _context;
 
         actionBarDrawerToggle = new ActionBarDrawerToggle((MainActivity)context, drawerLayout, 0, 0) {
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
+                lastDrawerView = drawerView;
             }
 
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
             }
+
+            public void onDrawerStateChanged(int newState) {
+                if(lastDrawerView != null && newState == DrawerLayout.STATE_SETTLING){
+                    if(drawerLayout.isDrawerOpen(lastDrawerView)){
+                        drawerLayout.closeDrawer(lastDrawerView);
+                        lastDrawerView = null;
+                    }
+                }
+
+                super.onDrawerStateChanged(newState);
+            }
         };
 
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, mainActivityModel.getMenuList());
-        drawerMenuListView.setAdapter(adapter);
-
-        drawerMenuListView.setOnItemClickListener(new ListView.OnItemClickListener() {
+        drawerLeftMenuListView.setOnItemClickListener(new ListView.OnItemClickListener() {
             public void onItemClick(AdapterView parent, View view, int position, long id) {
-                String menuString = (String) drawerMenuListView.getItemAtPosition(position);
+                String menuString = (String) drawerLeftMenuListView.getItemAtPosition(position);
                 Toast.makeText(context, menuString, Toast.LENGTH_SHORT).show();
             }
         });
+
+        drawerRightMenuListView.setOnItemClickListener(new ListView.OnItemClickListener() {
+            public void onItemClick(AdapterView parent, View view, int position, long id) {
+                String menuString = (String) drawerRightMenuListView.getItemAtPosition(position);
+                Toast.makeText(context, menuString, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        ArrayAdapter<String> leftAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, mainActivityModel.getCategoryList());
+        drawerLeftMenuListView.setAdapter(leftAdapter);
+
+        ArrayAdapter<String> rightAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, mainActivityModel.getFilterList());
+        drawerRightMenuListView.setAdapter(rightAdapter);
     }
 
     public void addFragment(FragmentManager fragmentManager, BaseFragment fragment) {
@@ -103,6 +129,12 @@ public class MainActivityPresenter {
             return true;
         }else if(item.getItemId() == R.id.filter_menu) {
             Toast.makeText(context, "filter", Toast.LENGTH_SHORT).show();
+            if(drawerLayout.isDrawerOpen(drawerRightMenuListView)) {
+                drawerLayout.closeDrawer(drawerRightMenuListView);
+            }else {
+                drawerLayout.openDrawer(drawerRightMenuListView);
+            }
+
             return true;
         }else {
             return actionBarDrawerToggle.onOptionsItemSelected(item);

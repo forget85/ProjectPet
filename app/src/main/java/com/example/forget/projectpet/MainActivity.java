@@ -9,11 +9,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     MainActivityPresenter mainActivityPresenter = null;
-    boolean bShowFilter = false;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -37,14 +35,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initView(){
-        ListView drawerMenuListView = (ListView) findViewById(R.id.drawer_list_view);
-        drawerMenuListView.addHeaderView(getLayoutInflater().inflate(R.layout.drawer_header, null, false));
-        drawerMenuListView.addFooterView(getLayoutInflater().inflate(R.layout.drawer_footer, null, false));
+        ListView drawerLeftMenuListView = (ListView) findViewById(R.id.drawer_list_view_left);
+        ListView drawerRightMenuListView = (ListView) findViewById(R.id.drawer_list_view_right);
+
+        drawerLeftMenuListView.addHeaderView(getLayoutInflater().inflate(R.layout.left_drawer_menu_header, null, false));
+        drawerLeftMenuListView.addFooterView(getLayoutInflater().inflate(R.layout.left_drawer_menu_footer, null, false));
+
+        drawerRightMenuListView.addHeaderView(getLayoutInflater().inflate(R.layout.right_drawer_menu_header, null, false));
+        //drawerRightMenuListView.addFooterView(getLayoutInflater().inflate(R.layout.right_drawer_menu_footer, null, false));
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
 
-        mainActivityPresenter = new MainActivityPresenter(this, drawerLayout, drawerMenuListView);
+        mainActivityPresenter = new MainActivityPresenter(this, drawerLayout, drawerLeftMenuListView, drawerRightMenuListView);
 
     }
 
