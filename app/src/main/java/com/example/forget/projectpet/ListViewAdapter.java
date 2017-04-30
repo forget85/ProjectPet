@@ -1,6 +1,7 @@
 package com.example.forget.projectpet;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import junit.framework.Assert;
 
@@ -33,33 +35,48 @@ class ListViewHolder extends RecyclerView.ViewHolder{
         shoppingMallTextView = (TextView) itemView.findViewById(R.id.shopping_mall_name_text_view);
         priceTextView = (TextView) itemView.findViewById(R.id.price_text_view);
     }
+
+    void bind(Context context, ListItem listItem){
+        //productImageView =
+        //saleImageView =
+        //freeShippingImageView =
+        //likeImageView =
+        productTextView.setText(listItem.getProductName());
+        shoppingMallTextView.setText(listItem.getShoppingMallName());
+        updateOnClickListener(context, listItem);
+    }
+
+    void updateOnClickListener(final Context context, final ListItem listItem){
+        View.OnClickListener moveItemPageListner = new View.OnClickListener(){
+            public void onClick(View view){
+                Toast.makeText(context, listItem.getProductName() + " click", Toast.LENGTH_SHORT).show();
+            }
+        };
+        productImageView.setOnClickListener(moveItemPageListner);
+        productTextView.setOnClickListener(moveItemPageListner);
+    }
 }
 
-public class ListViewAdapter extends RecyclerView.Adapter<ListViewHolder>{
+public class ListViewAdapter extends RecyclerView.Adapter<ListViewHolder> {
     ArrayList<ListItem> listItems = new ArrayList<>();
     Context context;
 
-    ListViewAdapter(Context _context){
+    ListViewAdapter(Context _context) {
         context = _context;
     }
 
-    public void updateData(ArrayList<ListItem> _listItems){
+    public void updateData(ArrayList<ListItem> _listItems) {
         listItems = _listItems;
     }
 
     public ListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
-        ListViewHolder holder = new ListViewHolder(v);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
+        ListViewHolder holder = new ListViewHolder(view);
         return holder;
     }
 
     public void onBindViewHolder(ListViewHolder holder, int position) {
-        //holder.productImageView =
-        //holder.saleImageView =
-        //holder.freeShippingImageView =
-        //holder.likeImageView =
-        holder.productTextView.setText(listItems.get(position).getProductName());
-        holder.shoppingMallTextView.setText(listItems.get(position).getShoppingMallName());
+        holder.bind(context, listItems.get(position));
     }
 
     public int getItemCount() {

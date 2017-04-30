@@ -34,7 +34,7 @@
         android:layout_gravity="start"
         android:orientation="vertical"
         android:divider="@color/colorBack"
-        android:dividerHeight="1dp"
+        android:dividerHeight="0dp"
         android:background="#FFFFFF"
         android:id="@+id/drawer_list_view"/>
 </android.support.v4.widget.DrawerLayout>
