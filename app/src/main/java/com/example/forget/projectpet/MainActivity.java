@@ -4,7 +4,6 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,17 +43,14 @@ public class MainActivity extends AppCompatActivity {
         drawerRightMenuListView.addHeaderView(getLayoutInflater().inflate(R.layout.right_drawer_menu_header, null, false));
         //drawerRightMenuListView.addFooterView(getLayoutInflater().inflate(R.layout.right_drawer_menu_footer, null, false));
 
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_home_black_24dp);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-
-        mainActivityPresenter = new MainActivityPresenter(this, drawerLayout, drawerLeftMenuListView, drawerRightMenuListView);
-
+        mainActivityPresenter = new MainActivityPresenter(this, getWindow().getDecorView());
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.action_bar, menu);
-        return true;
+        return mainActivityPresenter.onCreateOptionsMenu(menu);
     }
 
     protected void onPostCreate(Bundle savedInstanceState) {

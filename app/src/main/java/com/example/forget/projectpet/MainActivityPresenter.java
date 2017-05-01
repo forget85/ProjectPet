@@ -8,7 +8,9 @@ import android.support.annotation.NonNull;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,7 +19,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 public class MainActivityPresenter {
-    private MenuItem lastMenuItem = null;
+    private int lastMenuItemID = R.id.navigation_home;
     private DrawerLayout drawerLayout = null;
     private ActionBarDrawerToggle actionBarDrawerToggle = null;
     private MainActivityModel mainActivityModel = new MainActivityModel();
@@ -27,10 +29,11 @@ public class MainActivityPresenter {
 
     private Context context;
 
-    MainActivityPresenter(Context _context, DrawerLayout _drawerLayout, ListView _drawerLeftMenuListView, ListView _drawerRightMenuListView) {
-        drawerLayout = _drawerLayout;
-        drawerLeftMenuListView = _drawerLeftMenuListView;
-        drawerRightMenuListView = _drawerRightMenuListView;
+    MainActivityPresenter(Context _context, View view) {
+        drawerLayout = (DrawerLayout) view.findViewById(R.id.drawerLayout);
+        drawerLeftMenuListView = (ListView) view.findViewById(R.id.drawer_list_view_left);
+        drawerRightMenuListView = (ListView) view.findViewById(R.id.drawer_list_view_right);
+
         context = _context;
 
         actionBarDrawerToggle = new ActionBarDrawerToggle((MainActivity)context, drawerLayout, 0, 0) {
@@ -78,6 +81,47 @@ public class MainActivityPresenter {
         drawerRightMenuListView.setAdapter(rightAdapter);
     }
 
+    public boolean onCreateOptionsMenu(Menu menu){
+        boolean bDisplayHomeAsUpEnabled = true;
+        boolean bVisibleSearchItem = true;
+        boolean bVisibleFilterItem = true;
+
+        switch (lastMenuItemID) {
+            case R.id.navigation_home:
+                bDisplayHomeAsUpEnabled = true;
+                bVisibleSearchItem = true;
+                bVisibleFilterItem = true;
+                break;
+            case R.id.navigation_like:
+                bDisplayHomeAsUpEnabled = false;
+                bVisibleSearchItem = true;
+                bVisibleFilterItem = false;
+                break;
+            case R.id.navigation_search:
+                bDisplayHomeAsUpEnabled = false;
+                bVisibleSearchItem = true;
+                bVisibleFilterItem = false;
+                break;
+            case R.id.navigation_setting:
+                bDisplayHomeAsUpEnabled = false;
+                bVisibleSearchItem = false;
+                bVisibleFilterItem = false;
+                break;
+        }
+
+        MainActivity mainActivity = (MainActivity)context;
+        mainActivity.getMenuInflater().inflate(R.menu.action_bar, menu);
+        ActionBar actionBar = mainActivity.getSupportActionBar();
+        MenuItem searchMenuItem = menu.findItem(R.id.search_menu);
+        MenuItem filterMenuItem = menu.findItem(R.id.filter_menu);
+
+        actionBar.setDisplayHomeAsUpEnabled(bDisplayHomeAsUpEnabled);
+        searchMenuItem.setVisible(bVisibleSearchItem);
+        filterMenuItem.setVisible(bVisibleFilterItem);
+
+        return true;
+    }
+
     public void addFragment(FragmentManager fragmentManager, Fragment fragment) {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(R.id.fragment_container, fragment);
@@ -90,13 +134,16 @@ public class MainActivityPresenter {
         fragmentTransaction.replace(R.id.fragment_container, fragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
+
+        MainActivity mainActivity = (MainActivity)context;
+        mainActivity.invalidateOptionsMenu();
     }
 
     public boolean onNavigationItemSelected(FragmentManager fragmentManager, @NonNull MenuItem item) {
-        if (lastMenuItem == item)
+        if (lastMenuItemID == item.getItemId())
             return false;
 
-        lastMenuItem = item;
+        lastMenuItemID = item.getItemId();
         Fragment fragment = null;
         switch (item.getItemId()) {
             case R.id.navigation_home:
