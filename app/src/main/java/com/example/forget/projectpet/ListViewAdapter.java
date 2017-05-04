@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.bumptech.glide.Glide;
 
 import junit.framework.Assert;
 
@@ -41,6 +42,8 @@ class ListViewHolder extends RecyclerView.ViewHolder{
         //saleImageView =
         //freeShippingImageView =
         //likeImageView =
+        Glide.with(context).load(listItem.getImageUrl()).into(productImageView);
+        priceTextView.setText(listItem.getCost());
         productTextView.setText(listItem.getProductName());
         shoppingMallTextView.setText(listItem.getShoppingMallName());
         updateOnClickListener(context, listItem);

@@ -1,36 +1,31 @@
 package com.example.forget.projectpet;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 import java.util.ArrayList;
 
 class ListFragmentModel {
     private ArrayList<ListItem> listItems = new ArrayList<>();
 
-    void loadListData(){
-        listItems.clear();
-
-        listItems.add(new ListItem("상품1", "옥션"));
-        listItems.add(new ListItem("상품2", "지마켓"));
-        listItems.add(new ListItem("상품3", "11번가"));
-        listItems.add(new ListItem("상품4", "이베이"));
-        listItems.add(new ListItem("상품5", "네이버"));
-        listItems.add(new ListItem("상품6", "옥션"));
-        listItems.add(new ListItem("상품7", "11번가"));
-        listItems.add(new ListItem("상품8", "지마켓"));
-        listItems.add(new ListItem("상품9", "옥션"));
-        listItems.add(new ListItem("상품10", "이베이"));
-        listItems.add(new ListItem("상품11", "11번가"));
-        listItems.add(new ListItem("상품12", "지마켓"));
-        listItems.add(new ListItem("상품13", "옥션"));
-        listItems.add(new ListItem("상품14", "옥션"));
-        listItems.add(new ListItem("상품15", "11번가"));
-        listItems.add(new ListItem("상품16", "지마켓"));
-        listItems.add(new ListItem("상품17", "네이버"));
-        listItems.add(new ListItem("상품18", "지마켓"));
-        listItems.add(new ListItem("상품19", "이베이"));
-        listItems.add(new ListItem("상품20", "11번가"));
-    }
-
     ArrayList<ListItem> getData(){
         return listItems;
+    }
+
+    public void setJSONArray(JSONArray jsonArray){
+        parseData(jsonArray);
+    }
+
+    void parseData(JSONArray jsonArray){
+        for (int iItem = 0; iItem < jsonArray.size(); iItem++) {
+            JSONObject itemObject = (JSONObject) jsonArray.get(iItem);
+            String productUrl = itemObject.get("product_url").toString();
+            String productName = itemObject.get("product_name").toString();
+            String imageUrl = itemObject.get("image_url").toString();
+            String cost = itemObject.get("cost").toString();
+            String productInfo = itemObject.get("product_info").toString();
+            ListItem listItem = new ListItem(productUrl, productName, imageUrl, cost, productInfo);
+            listItems.add(listItem);
+        }
     }
 }
