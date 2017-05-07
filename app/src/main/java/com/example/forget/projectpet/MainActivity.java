@@ -1,5 +1,6 @@
 package com.example.forget.projectpet;
 
+import android.app.Fragment;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,7 +12,6 @@ import android.view.MenuItem;
 import android.widget.ListView;
 
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
 
@@ -19,10 +19,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     MainActivityPresenter mainActivityPresenter = null;
+    private boolean bLoadedData = false;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -39,11 +39,13 @@ public class MainActivity extends AppCompatActivity {
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        bLoadedData = false;
 
         initView();
 
         readData();
-        mainActivityPresenter.addFragment(getFragmentManager(), new ListFragment());
+
+        mainActivityPresenter.addFragment(getFragmentManager(), new ListFragment(), "listFragment");
     }
 
     private void initView(){
@@ -54,7 +56,6 @@ public class MainActivity extends AppCompatActivity {
         drawerLeftMenuListView.addFooterView(getLayoutInflater().inflate(R.layout.left_drawer_menu_footer, null, false));
 
         drawerRightMenuListView.addHeaderView(getLayoutInflater().inflate(R.layout.right_drawer_menu_header, null, false));
-        //drawerRightMenuListView.addFooterView(getLayoutInflater().inflate(R.layout.right_drawer_menu_footer, null, false));
 
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_home_black_24dp);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -86,6 +87,23 @@ public class MainActivity extends AppCompatActivity {
         return mainActivityPresenter.getListItems();
     }
 
+    public void openItemWebView(String itemUrl){
+        getSupportActionBar().hide();
+        mainActivityPresenter.openItemWebView(getFragmentManager(), itemUrl);
+    }
+
+    public void onBackPressed() {
+        if(!bLoadedData)
+            return;
+
+        if(mainActivityPresenter.onBackPressed(getFragmentManager(), getSupportActionBar()))
+            super.onBackPressed();
+    }
+
+    public boolean isFinishLoad(){
+        return bLoadedData;
+    }
+
     private void readData() {
         try {
             ReadDataTask readDataTask = new ReadDataTask();
@@ -106,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
 
         protected void onPostExecute(String string) {
             super.onPostExecute(string);
+            bLoadedData = true;
         }
 
         String getData(String urlString){

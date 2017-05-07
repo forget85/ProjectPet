@@ -1,8 +1,5 @@
 package com.example.forget.projectpet;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
 import java.util.ArrayList;
 
 class ListFragmentModel {

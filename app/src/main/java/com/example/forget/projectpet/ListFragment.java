@@ -1,6 +1,5 @@
 package com.example.forget.projectpet;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -8,14 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
-import org.json.simple.parser.ParseException;
-
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
+import java.util.ArrayList;
 
 public class ListFragment extends BaseFragment {
     private ListFragmentPresenter listFragmentPresenter = null;
@@ -27,9 +19,8 @@ public class ListFragment extends BaseFragment {
         initRecyclerView(recyclerView);
 
         listFragmentPresenter = new ListFragmentPresenter(context, recyclerView);
+        getData();
 
-        listFragmentPresenter.setListItems(((MainActivity)context).getListItems());
-        listFragmentPresenter.updateList();
         return view;
     }
 
@@ -41,5 +32,49 @@ public class ListFragment extends BaseFragment {
         final int dividerHeight = 20;
         recyclerView.addItemDecoration(new ListViewItemDecoration(columnCount, dividerWidth, dividerHeight));
         recyclerView.setLayoutManager(new GridLayoutManager(context, columnCount));
+    }
+
+    public void setListitems(ArrayList<ListItem> _listItems){
+        listFragmentPresenter.setListItems(_listItems);
+        listFragmentPresenter.updateList();
+    }
+
+    public boolean isFinishLoadListItems(){
+        return ((MainActivity)context).isFinishLoad();
+    }
+
+    public void getListItemsForMainActivity(){
+        setListitems(((MainActivity)context).getListItems());
+    }
+
+    private void getData() {
+        try {
+            ReadListItemTask readListItemTask = new ReadListItemTask();
+            readListItemTask.execute();
+        }catch (Exception exception){
+            System.out.println(exception.toString());
+        }
+    }
+
+    private class ReadListItemTask extends AsyncTask<String, String, String> {
+        protected String doInBackground(String... params) {
+            getListItemsForMainActivity();
+            return "Success";
+        }
+
+        protected void onPostExecute(String string) {
+            super.onPostExecute(string);
+        }
+
+        String getData(){
+            boolean bStop = false;
+            while(!bStop){
+                if(isFinishLoadListItems()){
+                    bStop = true;
+                }
+            }
+
+            return "Success";
+        }
     }
 }

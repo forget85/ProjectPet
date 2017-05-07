@@ -1,7 +1,6 @@
 package com.example.forget.projectpet;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.bumptech.glide.Glide;
 
 import junit.framework.Assert;
@@ -38,10 +36,6 @@ class ListViewHolder extends RecyclerView.ViewHolder{
     }
 
     void bind(Context context, ListItem listItem){
-        //productImageView =
-        //saleImageView =
-        //freeShippingImageView =
-        //likeImageView =
         Glide.with(context).load(listItem.getImageUrl()).into(productImageView);
         priceTextView.setText(listItem.getCost());
         productTextView.setText(listItem.getProductName());
@@ -52,7 +46,7 @@ class ListViewHolder extends RecyclerView.ViewHolder{
     void updateOnClickListener(final Context context, final ListItem listItem){
         View.OnClickListener moveItemPageListner = new View.OnClickListener(){
             public void onClick(View view){
-                Toast.makeText(context, listItem.getProductName() + " click", Toast.LENGTH_SHORT).show();
+                ((MainActivity)context).openItemWebView(listItem.getProductUrl());
             }
         };
         productImageView.setOnClickListener(moveItemPageListner);

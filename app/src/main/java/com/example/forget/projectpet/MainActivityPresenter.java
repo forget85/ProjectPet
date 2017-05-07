@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -19,7 +20,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
 
@@ -31,6 +31,9 @@ public class MainActivityPresenter {
     private ListView drawerLeftMenuListView = null;
     private ListView drawerRightMenuListView = null;
     private View lastDrawerView = null;
+    private BottomNavigationView navigationView = null;
+    private final long FINISH_INTERVAL_TIME = 2000;
+    private long backPressedTime = 0;
 
     private Context context;
 
@@ -38,6 +41,7 @@ public class MainActivityPresenter {
         drawerLayout = (DrawerLayout) view.findViewById(R.id.drawerLayout);
         drawerLeftMenuListView = (ListView) view.findViewById(R.id.drawer_list_view_left);
         drawerRightMenuListView = (ListView) view.findViewById(R.id.drawer_list_view_right);
+        navigationView = (BottomNavigationView) view.findViewById(R.id.navigation);
 
         context = _context;
 
@@ -127,16 +131,17 @@ public class MainActivityPresenter {
         return true;
     }
 
-    public void addFragment(FragmentManager fragmentManager, Fragment fragment) {
+    public void addFragment(FragmentManager fragmentManager, Fragment fragment, String tag) {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.fragment_container, fragment);
+        fragmentTransaction.add(R.id.fragment_container, fragment, tag);
+        fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
 
-    public void changeFragment(FragmentManager fragmentManager, Fragment fragment) {
+    public void changeFragment(FragmentManager fragmentManager, Fragment fragment, String tag) {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        fragmentTransaction.replace(R.id.fragment_container, fragment);
+        fragmentTransaction.replace(R.id.fragment_container, fragment, tag);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
 
@@ -150,27 +155,32 @@ public class MainActivityPresenter {
 
         lastMenuItemID = item.getItemId();
         Fragment fragment = null;
+        String tag = null;
         switch (item.getItemId()) {
             case R.id.navigation_home:
                 fragment = new ListFragment();
                 item.setChecked(true);
+                tag = "listFragment";
                 break;
             case R.id.navigation_like:
                 fragment = new LikeFragment();
                 item.setChecked(true);
+                tag = "likeFragment";
                 break;
             case R.id.navigation_search:
                 fragment = new SearchFragment();
                 item.setChecked(true);
+                tag = "searchFragment";
                 break;
             case R.id.navigation_setting:
                 fragment = new SettingFragment();
                 item.setChecked(true);
+                tag = "settingFragment";
                 break;
         }
 
         if (fragment != null) {
-            changeFragment(fragmentManager, fragment);
+            changeFragment(fragmentManager, fragment, tag);
             return true;
         }
 
@@ -208,5 +218,48 @@ public class MainActivityPresenter {
 
     ArrayList<ListItem> getListItems(){
         return mainActivityModel.getListItems();
+    }
+
+    public void openItemWebView(FragmentManager fragmentManager, String itemUrl){
+        ItemViewFragment itemViewFragment = new ItemViewFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("itemUrlString", itemUrl);
+        itemViewFragment.setArguments(bundle);
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(R.id.activity_container, itemViewFragment, "itemViewFragment");
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+    }
+
+    public boolean onBackPressed(FragmentManager fragmentManager, ActionBar actionBar){
+        long tempTime = System.currentTimeMillis();
+        long intervalTime = tempTime - backPressedTime;
+
+        if(fragmentManager.getBackStackEntryCount() == 0) {
+            if (0 <= intervalTime && intervalTime <= FINISH_INTERVAL_TIME) {
+            } else {
+                backPressedTime = tempTime;
+                Toast.makeText(context, "'뒤로'버튼을 한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }else{
+            if(fragmentManager.findFragmentByTag("itemViewFragment") != null){
+                actionBar.show();
+            }else{
+                Fragment currentFragment = fragmentManager.findFragmentById(R.id.fragment_container);
+
+                if(currentFragment.getTag() == "listFragment"){
+                    navigationView.setSelectedItemId(R.id.navigation_home);
+                }else if(currentFragment.getTag() == "likeFragment"){
+                    navigationView.setSelectedItemId(R.id.navigation_like);
+                }else if(currentFragment.getTag() == "searchFragment"){
+                    navigationView.setSelectedItemId(R.id.navigation_search);
+                }else if(currentFragment.getTag() == "settingFragment") {
+                    navigationView.setSelectedItemId(R.id.navigation_setting);
+                }
+            }
+        }
+
+        return true;
     }
 }

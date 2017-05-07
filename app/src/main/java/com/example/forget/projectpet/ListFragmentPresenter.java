@@ -2,9 +2,6 @@ package com.example.forget.projectpet;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
 import java.util.ArrayList;
 
 class ListFragmentPresenter {
@@ -15,7 +12,6 @@ class ListFragmentPresenter {
     ListFragmentPresenter(Context _context, RecyclerView _recyclerView){
         recyclerView = _recyclerView;
         listViewAdapter = new ListViewAdapter(_context);
-
     }
 
     void updateList(){
