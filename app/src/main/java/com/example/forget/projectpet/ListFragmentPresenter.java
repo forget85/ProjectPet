@@ -24,7 +24,7 @@ class ListFragmentPresenter {
         recyclerView.setAdapter(listViewAdapter);
     }
 
-    public void setJSONArray(JSONArray jsonArray){
-        listFragmentModel.setJSONArray(jsonArray);
+    public void setListItems(ArrayList<ListItem> listItem){
+        listFragmentModel.setListItems(listItem);
     }
 }

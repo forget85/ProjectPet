@@ -9,6 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
+
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
@@ -16,6 +18,8 @@ import org.json.simple.parser.ParseException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     MainActivityPresenter mainActivityPresenter = null;
@@ -38,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
         initView();
 
+        readData();
         mainActivityPresenter.addFragment(getFragmentManager(), new ListFragment());
     }
 
@@ -75,5 +80,47 @@ public class MainActivity extends AppCompatActivity {
         if (mainActivityPresenter.onOptionsItemSelected(item))
             return true;
         return super.onOptionsItemSelected(item);
+    }
+
+    public ArrayList<ListItem> getListItems(){
+        return mainActivityPresenter.getListItems();
+    }
+
+    private void readData() {
+        try {
+            ReadDataTask readDataTask = new ReadDataTask();
+            readDataTask.execute("http://13.124.70.76/products");
+        }catch (Exception exception){
+            System.out.println(exception.toString());
+        }
+    }
+
+    private class ReadDataTask extends AsyncTask<String, String, String> {
+        protected String doInBackground(String... params) {
+            try{
+                return getData(params[0]);
+            }catch (Exception exception){
+                return "fail";
+            }
+        }
+
+        protected void onPostExecute(String string) {
+            super.onPostExecute(string);
+        }
+
+        String getData(String urlString){
+            try {
+                URL url = new URL(urlString);
+                InputStreamReader inputStreamReader = new InputStreamReader(url.openConnection().getInputStream(), "UTF-8");
+                try {
+                    JSONArray jsonArray = (JSONArray) JSONValue.parseWithException(inputStreamReader);
+                    mainActivityPresenter.setJSONArray(jsonArray);
+                } catch (ParseException parseException) {
+                }
+            }catch (IOException exception){
+                return "fail";
+            }
+            return "Success";
+        }
     }
 }

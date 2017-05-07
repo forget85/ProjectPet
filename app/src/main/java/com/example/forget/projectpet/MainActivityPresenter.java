@@ -18,7 +18,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+
+import java.util.ArrayList;
 
 public class MainActivityPresenter {
     private int lastMenuItemID = R.id.navigation_home;
@@ -197,5 +200,13 @@ public class MainActivityPresenter {
 
     public void onConfigurationChanged(Configuration newConfig) {
         actionBarDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    public void setJSONArray(JSONArray jsonArray){
+        mainActivityModel.setJSONArray(jsonArray);
+    }
+
+    ArrayList<ListItem> getListItems(){
+        return mainActivityModel.getListItems();
     }
 }

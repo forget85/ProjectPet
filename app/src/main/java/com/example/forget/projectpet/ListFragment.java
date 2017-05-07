@@ -1,5 +1,6 @@
 package com.example.forget.projectpet;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,8 +28,8 @@ public class ListFragment extends BaseFragment {
 
         listFragmentPresenter = new ListFragmentPresenter(context, recyclerView);
 
-        readData();
-
+        listFragmentPresenter.setListItems(((MainActivity)context).getListItems());
+        listFragmentPresenter.updateList();
         return view;
     }
 
@@ -40,44 +41,5 @@ public class ListFragment extends BaseFragment {
         final int dividerHeight = 20;
         recyclerView.addItemDecoration(new ListViewItemDecoration(columnCount, dividerWidth, dividerHeight));
         recyclerView.setLayoutManager(new GridLayoutManager(context, columnCount));
-    }
-
-    private void readData() {
-        try {
-            ReadDataTask readDataTask = new ReadDataTask();
-            readDataTask.execute("http://13.124.70.76/products");
-        }catch (Exception exception){
-            System.out.println(exception.toString());
-        }
-    }
-
-    private class ReadDataTask extends AsyncTask<String, String, String> {
-        protected String doInBackground(String... params) {
-            try{
-                return getData(params[0]);
-            }catch (Exception exception){
-                return "fail";
-            }
-        }
-
-        protected void onPostExecute(String string) {
-            super.onPostExecute(string);
-            listFragmentPresenter.updateList();
-        }
-
-        String getData(String urlString){
-            try {
-                URL url = new URL(urlString);
-                InputStreamReader inputStreamReader = new InputStreamReader(url.openConnection().getInputStream(), "UTF-8");
-                try {
-                    JSONArray jsonArray = (JSONArray) JSONValue.parseWithException(inputStreamReader);
-                    listFragmentPresenter.setJSONArray(jsonArray);
-                } catch (ParseException parseException) {
-                }
-            }catch (IOException exception){
-                return "fail";
-            }
-            return "Success";
-        }
     }
 }
