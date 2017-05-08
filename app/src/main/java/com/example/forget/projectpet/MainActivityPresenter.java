@@ -19,6 +19,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import junit.framework.Assert;
+
 import org.json.simple.JSONArray;
 
 import java.util.ArrayList;
@@ -131,10 +133,11 @@ public class MainActivityPresenter {
         return true;
     }
 
-    public void addFragment(FragmentManager fragmentManager, Fragment fragment, String tag) {
+    public void addFragment(FragmentManager fragmentManager, Fragment fragment, String tag, boolean bAddBackStack) {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(R.id.fragment_container, fragment, tag);
-        fragmentTransaction.addToBackStack(null);
+        if(bAddBackStack)
+            fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
 
@@ -231,35 +234,45 @@ public class MainActivityPresenter {
         fragmentTransaction.commit();
     }
 
-    public boolean onBackPressed(FragmentManager fragmentManager, ActionBar actionBar){
+    public boolean onBackPressed(FragmentManager fragmentManager){
         long tempTime = System.currentTimeMillis();
         long intervalTime = tempTime - backPressedTime;
 
         if(fragmentManager.getBackStackEntryCount() == 0) {
-            if (0 <= intervalTime && intervalTime <= FINISH_INTERVAL_TIME) {
-            } else {
+            if (!(0 <= intervalTime && intervalTime <= FINISH_INTERVAL_TIME)) {
                 backPressedTime = tempTime;
                 Toast.makeText(context, "'뒤로'버튼을 한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-        }else{
-            if(fragmentManager.findFragmentByTag("itemViewFragment") != null){
-                actionBar.show();
-            }else{
-                Fragment currentFragment = fragmentManager.findFragmentById(R.id.fragment_container);
-
-                if(currentFragment.getTag() == "listFragment"){
-                    navigationView.setSelectedItemId(R.id.navigation_home);
-                }else if(currentFragment.getTag() == "likeFragment"){
-                    navigationView.setSelectedItemId(R.id.navigation_like);
-                }else if(currentFragment.getTag() == "searchFragment"){
-                    navigationView.setSelectedItemId(R.id.navigation_search);
-                }else if(currentFragment.getTag() == "settingFragment") {
-                    navigationView.setSelectedItemId(R.id.navigation_setting);
-                }
+                return true;
             }
         }
 
-        return true;
+        return false;
+    }
+
+    public void postProcessAfterBackPressed(FragmentManager fragmentManager, ActionBar actionBar){
+        if(fragmentManager.findFragmentByTag("itemViewFragment") == null){
+            if(!actionBar.isShowing())
+                actionBar.show();
+        }
+
+        Fragment currentFragment = fragmentManager.findFragmentById(R.id.fragment_container);
+
+        int menuID = -1;
+        if(currentFragment.getTag() == "listFragment"){
+            menuID = R.id.navigation_home;
+        }else if(currentFragment.getTag() == "likeFragment"){
+            menuID = R.id.navigation_like;
+        }else if(currentFragment.getTag() == "searchFragment"){
+            menuID = R.id.navigation_search;
+        }else if(currentFragment.getTag() == "settingFragment") {
+            menuID = R.id.navigation_setting;
+        }
+
+        if(menuID != -1){
+            MenuItem menuItem = navigationView.getMenu().findItem(menuID);
+            if(menuItem != null){
+                menuItem.setChecked(true);
+            }
+        }
     }
 }

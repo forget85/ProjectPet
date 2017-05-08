@@ -1,6 +1,5 @@
 package com.example.forget.projectpet;
 
-import android.app.Fragment;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -45,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
         readData();
 
-        mainActivityPresenter.addFragment(getFragmentManager(), new ListFragment(), "listFragment");
+        mainActivityPresenter.addFragment(getFragmentManager(), new ListFragment(), "listFragment", false);
     }
 
     private void initView(){
@@ -96,8 +95,10 @@ public class MainActivity extends AppCompatActivity {
         if(!bLoadedData)
             return;
 
-        if(mainActivityPresenter.onBackPressed(getFragmentManager(), getSupportActionBar()))
+        if(!mainActivityPresenter.onBackPressed(getFragmentManager())) {
             super.onBackPressed();
+            mainActivityPresenter.postProcessAfterBackPressed(getFragmentManager(), getSupportActionBar());
+        }
     }
 
     public boolean isFinishLoad(){

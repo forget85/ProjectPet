@@ -15,11 +15,15 @@ public class BaseFragment extends Fragment {
 
         //savedInstanceState 처리
 
+        processInit();
+
         if(view == null)
             view = super.onCreateView(inflater, container, savedInstanceState);
 
         return view;
     }
+
+    public void processInit(){}
 
     public View initView(LayoutInflater inflater, ViewGroup container){
         return null;

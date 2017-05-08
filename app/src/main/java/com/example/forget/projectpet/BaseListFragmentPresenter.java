@@ -1,26 +1,27 @@
 package com.example.forget.projectpet;
+
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-class ListFragmentPresenter {
+public class BaseListFragmentPresenter {
     private RecyclerView recyclerView = null;
     private ListViewAdapter listViewAdapter = null;
-    private ListFragmentModel listFragmentModel = new ListFragmentModel();
+    private BaseListFragmentModel baseListFragmentModel = new BaseListFragmentModel();
 
-    ListFragmentPresenter(Context _context, RecyclerView _recyclerView){
+    BaseListFragmentPresenter(Context _context, RecyclerView _recyclerView){
         recyclerView = _recyclerView;
         listViewAdapter = new ListViewAdapter(_context);
     }
 
     void updateList(){
-        listViewAdapter.updateData(listFragmentModel.getData());
+        listViewAdapter.updateData(baseListFragmentModel.getData());
         listViewAdapter.notifyDataSetChanged();
         recyclerView.setAdapter(listViewAdapter);
     }
 
     public void setListItems(ArrayList<ListItem> listItem){
-        listFragmentModel.setListItems(listItem);
+        baseListFragmentModel.setListItems(listItem);
     }
 }
