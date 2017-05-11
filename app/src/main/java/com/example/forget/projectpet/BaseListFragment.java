@@ -1,5 +1,8 @@
 package com.example.forget.projectpet;
 
+import android.app.Fragment;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,30 +11,34 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-public class BaseListFragment extends BaseFragment {
-    private BaseListFragmentPresenter baseListFragmentPresenter = null;
+public class BaseListFragment extends Fragment {
+    private BaseListFragmentPresenter baseListFragmentPresenter = new BaseListFragmentPresenter();
+    static final int columnCount = 2;
+    static final int dividerWidth = 20;
+    static final int dividerHeight = 20;
 
-    public View initView(LayoutInflater inflater, ViewGroup container){
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+
         View view = inflater.inflate(R.layout.fragment_list, container, false);
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list_view);
-        initRecyclerView(recyclerView);
-        baseListFragmentPresenter = new BaseListFragmentPresenter(context, recyclerView);
-
-        return view;
-    }
-
-    public void initRecyclerView(RecyclerView recyclerView){
         recyclerView.setHasFixedSize(true);
 
-        final int columnCount = 2;
-        final int dividerWidth = 20;
-        final int dividerHeight = 20;
         recyclerView.addItemDecoration(new ListViewItemDecoration(columnCount, dividerWidth, dividerHeight));
-        recyclerView.setLayoutManager(new GridLayoutManager(context, columnCount));
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), columnCount));
+
+        baseListFragmentPresenter.Attach(getActivity(), recyclerView);
+        return view;
     }
 
     public void setListitems(ArrayList<ListItem> _listItems){
         baseListFragmentPresenter.setListItems(_listItems);
         baseListFragmentPresenter.updateList();
+    }
+
+    public void onDestroy() {
+        super.onDestroy();
+        baseListFragmentPresenter.onDestroy();
+        baseListFragmentPresenter = null;
     }
 }

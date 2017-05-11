@@ -3,6 +3,7 @@
     package="com.example.forget.projectpet">
 
     <application
+        android:name=".ProjectPetApplication"
         android:allowBackup="true"
         android:configChanges="orientation|keyboardHidden"
         android:icon="@mipmap/ic_launcher"

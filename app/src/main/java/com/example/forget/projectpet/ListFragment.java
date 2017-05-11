@@ -1,50 +1,21 @@
 package com.example.forget.projectpet;
 
 import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
-public class ListFragment extends BaseListFragment {
-    public void processInit() {
-        super.processInit();
-        getData();
+import java.util.ArrayList;
+
+public class ListFragment extends BaseListFragment implements LoadDataListener {
+    public void onFinishLoad(ArrayList<ListItem> listItems) {
+        setListitems(listItems);
     }
 
-    public boolean isFinishLoadListItems(){
-        return ((MainActivity)context).isFinishLoad();
-    }
-
-    public void getListItemsForMainActivity(){
-        setListitems(((MainActivity)context).getListItems());
-    }
-
-    private void getData() {
-        try {
-            ReadListItemTask readListItemTask = new ReadListItemTask();
-            readListItemTask.execute();
-        }catch (Exception exception){
-            System.out.println(exception.toString());
-        }
-    }
-
-    private class ReadListItemTask extends AsyncTask<String, String, String> {
-        protected String doInBackground(String... params) {
-            getData();
-            return "Success";
-        }
-
-        protected void onPostExecute(String string) {
-            super.onPostExecute(string);
-            getListItemsForMainActivity();
-        }
-
-        String getData(){
-            boolean bStop = false;
-            while(!bStop){
-                if(isFinishLoadListItems()){
-                    bStop = true;
-                }
-            }
-
-            return "Success";
-        }
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        View view =  super.onCreateView(inflater, container, savedInstanceState);
+        return view;
     }
 }

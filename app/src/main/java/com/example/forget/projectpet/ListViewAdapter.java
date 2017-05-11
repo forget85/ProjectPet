@@ -85,6 +85,7 @@ class ListViewItemDecoration extends RecyclerView.ItemDecoration{
     private int dividerWidth;
     private int dividerHeight;
     private int columnCount;
+
     public ListViewItemDecoration(int _columnCount, int _dividerWidth, int _dividerHeight){
         dividerWidth = _dividerWidth;
         dividerHeight = _dividerHeight;
