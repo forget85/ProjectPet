@@ -46,11 +46,11 @@
             android:textSize="15dp"
             android:text="무료배송"/>
 
-        <ImageView
-            android:id="@+id/like_image_view"
+        <ImageButton
+            android:id="@+id/like_image_button_view"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:background="@color/colorLike"
+            android:background="@drawable/ic_pet_48dp"
             android:layout_alignRight="@+id/product_image_view"
             android:layout_alignTop="@+id/product_image_view"/>
 

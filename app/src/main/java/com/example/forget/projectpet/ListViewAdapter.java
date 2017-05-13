@@ -30,7 +30,7 @@ class ListViewHolder extends RecyclerView.ViewHolder{
         productImageView = (ImageView) itemView.findViewById(R.id.product_image_view);
         saleTextView = (TextView) itemView.findViewById(R.id.sale_text_view);
         freeShippingTextView = (TextView) itemView.findViewById(R.id.free_shipping_text_view);
-        likeImageView = (ImageView) itemView.findViewById(R.id.like_image_view);
+        likeImageView = (ImageView) itemView.findViewById(R.id.like_image_button_view);
         productTextView = (TextView) itemView.findViewById(R.id.product_name_text_view);
         shoppingMallTextView = (TextView) itemView.findViewById(R.id.shopping_mall_name_text_view);
         priceTextView = (TextView) itemView.findViewById(R.id.price_text_view);
