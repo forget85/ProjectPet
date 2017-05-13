@@ -88,6 +88,10 @@ public class MainActivity extends AppCompatActivity implements InvalidataOptionM
         }
     }
 
+    public void reloadItems(){
+        mainActivityPresenter.readData();
+    }
+
     public void onInvalidateOptionsMenu() {
         invalidateOptionsMenu();
     }

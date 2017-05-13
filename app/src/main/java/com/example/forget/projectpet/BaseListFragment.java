@@ -3,6 +3,7 @@ package com.example.forget.projectpet;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,7 +12,7 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-public class BaseListFragment extends Fragment {
+public class BaseListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
     private BaseListFragmentPresenter baseListFragmentPresenter = new BaseListFragmentPresenter();
     static final int columnCount = 2;
     static final int dividerWidth = 20;
@@ -27,7 +28,10 @@ public class BaseListFragment extends Fragment {
         recyclerView.addItemDecoration(new ListViewItemDecoration(columnCount, dividerWidth, dividerHeight));
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), columnCount));
 
-        baseListFragmentPresenter.Attach(getActivity(), recyclerView);
+        SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_layout);
+        swipeRefreshLayout.setOnRefreshListener(this);
+
+        baseListFragmentPresenter.Attach(getActivity(), recyclerView, swipeRefreshLayout);
         return view;
     }
 
@@ -40,5 +44,9 @@ public class BaseListFragment extends Fragment {
         super.onDestroy();
         baseListFragmentPresenter.onDestroy();
         baseListFragmentPresenter = null;
+    }
+
+    public void onRefresh() {
+        baseListFragmentPresenter.onRefreshList(getActivity());
     }
 }

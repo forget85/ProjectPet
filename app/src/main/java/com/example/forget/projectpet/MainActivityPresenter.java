@@ -127,7 +127,9 @@ public class MainActivityPresenter {
 
     public void readData() {
         try {
-            readDataTask = new ReadDataTask();
+            if(readDataTask == null)
+                readDataTask = new ReadDataTask();
+            
             readDataTask.execute("http://13.124.70.76/products");
         }catch (Exception exception){
             System.out.println(exception.toString());

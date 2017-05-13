@@ -51,6 +51,7 @@ class MainActivityModel {
     }
 
     public void setJSONArray(JSONArray jsonArray){
+        listItems.clear();
         parseData(jsonArray);
     }
 
