@@ -35,6 +35,10 @@ public class BaseListFragment extends Fragment implements SwipeRefreshLayout.OnR
         return view;
     }
 
+    public void setFilterText(String string){
+        baseListFragmentPresenter.setFilterText(string);
+    }
+
     public void setListitems(ArrayList<ListItem> _listItems){
         baseListFragmentPresenter.setListItems(_listItems);
         baseListFragmentPresenter.updateList();

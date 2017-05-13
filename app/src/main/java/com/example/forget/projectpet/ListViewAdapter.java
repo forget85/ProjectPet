@@ -6,12 +6,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import junit.framework.Assert;
-
 import java.util.ArrayList;
 
 class ListViewHolder extends RecyclerView.ViewHolder{
@@ -54,9 +55,43 @@ class ListViewHolder extends RecyclerView.ViewHolder{
     }
 }
 
-public class ListViewAdapter extends RecyclerView.Adapter<ListViewHolder> {
+public class ListViewAdapter extends RecyclerView.Adapter<ListViewHolder> implements Filterable{
+    private class ListFilter extends Filter{
+        protected FilterResults performFiltering(CharSequence constraint) {
+            FilterResults filterResults = new FilterResults();
+
+            if(constraint == null || constraint.length() == 0){
+                filterResults.values = listItems;
+                filterResults.count = listItems.size();
+            }else{
+                ArrayList<ListItem> filterItemLists = new ArrayList<>();
+                for(ListItem listItem : listItems){
+                    if(listItem.getProductName().toUpperCase().contains(constraint.toString().toUpperCase())){
+                        filterItemLists.add(listItem);
+                    }
+                }
+
+                filterResults.values = filterItemLists;
+                filterResults.count = filterItemLists.size();
+            }
+
+            return filterResults;
+        }
+
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            listViewItems = (ArrayList<ListItem>) results.values;
+            if(0 < results.count){
+                notifyDataSetChanged();
+            }
+        }
+    }
+
+
     ArrayList<ListItem> listItems = new ArrayList<>();
+    ArrayList<ListItem> listViewItems = new ArrayList<>();
     Context context;
+
+    Filter listFilter;
 
     ListViewAdapter(Context _context) {
         context = _context;
@@ -64,6 +99,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewHolder> {
 
     public void updateData(ArrayList<ListItem> _listItems) {
         listItems = _listItems;
+        listViewItems = listItems;
     }
 
     public ListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -73,11 +109,18 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewHolder> {
     }
 
     public void onBindViewHolder(ListViewHolder holder, int position) {
-        holder.bind(context, listItems.get(position));
+        holder.bind(context, listViewItems.get(position));
     }
 
     public int getItemCount() {
-        return listItems.size();
+        return listViewItems.size();
+    }
+
+    public Filter getFilter() {
+        if(listFilter == null)
+            listFilter = new ListFilter();
+
+        return listFilter;
     }
 }
 

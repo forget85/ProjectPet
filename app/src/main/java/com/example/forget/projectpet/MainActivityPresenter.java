@@ -11,6 +11,7 @@ import android.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -99,6 +100,8 @@ public class MainActivityPresenter {
 
         ArrayAdapter<String> rightAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, mainActivityModel.getFilterList());
         drawerRightMenuListView.setAdapter(rightAdapter);
+
+        actionBar.setDisplayShowTitleEnabled(false);
     }
 
    public void onDestroy(){
@@ -129,7 +132,7 @@ public class MainActivityPresenter {
         try {
             if(readDataTask == null)
                 readDataTask = new ReadDataTask();
-            
+
             readDataTask.execute("http://13.124.70.76/products");
         }catch (Exception exception){
             System.out.println(exception.toString());
@@ -202,6 +205,33 @@ public class MainActivityPresenter {
         actionBar.setDisplayHomeAsUpEnabled(bDisplayHomeAsUpEnabled);
         searchMenuItem.setVisible(bVisibleSearchItem);
         filterMenuItem.setVisible(bVisibleFilterItem);
+
+        SearchView searchView = (SearchView) searchMenuItem.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
+            public boolean onQueryTextSubmit(String string) {
+                Fragment currentFragment = fragmentManager.findFragmentById(R.id.fragment_container);
+                if (!currentFragment.getTag().equals("settingFragment")){
+                    BaseListFragment baseListFragment = (BaseListFragment) currentFragment;
+
+                    if (baseListFragment != null) {
+                        baseListFragment.setFilterText(string);
+                    }
+                }
+                return false;
+            }
+
+            public boolean onQueryTextChange(String string) {
+                Fragment currentFragment = fragmentManager.findFragmentById(R.id.fragment_container);
+                if (!currentFragment.getTag().equals("settingFragment")){
+                    BaseListFragment baseListFragment = (BaseListFragment) currentFragment;
+
+                    if (baseListFragment != null) {
+                        baseListFragment.setFilterText(string);
+                    }
+                }
+                return false;
+            }
+        });
 
         if(invalidataOptionMenuListener != null)
             invalidataOptionMenuListener.onInvalidateOptionsMenu();

@@ -27,6 +27,10 @@ public class BaseListFragmentPresenter {
         }
     }
 
+    public void setFilterText(String string){
+        listViewAdapter.getFilter().filter(string);
+    }
+
     public void setListItems(ArrayList<ListItem> listItem){
         baseListFragmentModel.setListItems(listItem);
     }
