@@ -219,6 +219,14 @@ public class MainActivityPresenter {
         }else {
             fragmentTransaction.add(R.id.fragment_container, fragment, tag);
         }
+
+        int drawerLockMode = DrawerLayout.LOCK_MODE_LOCKED_CLOSED;
+        if(tag.equals("listFragment")){
+            drawerLockMode = DrawerLayout.LOCK_MODE_UNLOCKED;
+        }
+
+        drawerLayout.setDrawerLockMode(drawerLockMode);
+
         if(bAddBackStack) {
             if(MAX_FRAGMENT_MANAGER_BACK_STACK_SIZE < fragmentManager.getBackStackEntryCount()){
                 fragmentManager.popBackStack();
