@@ -2,7 +2,6 @@ package com.example.forget.projectpet;
 
 import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,13 +9,14 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
-import android.view.Menu;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import org.json.simple.JSONArray;
@@ -34,12 +34,7 @@ public class MainActivityPresenter {
 
     private int lastMenuItemID = R.id.navigation_home;
     private DrawerLayout drawerLayout;
-    private ActionBarDrawerToggle actionBarDrawerToggle;
     private MainActivityModel mainActivityModel = new MainActivityModel();
-    private View lastDrawerView;
-    ListView drawerLeftMenuListView;
-    ListView drawerRightMenuListView;
-
     private long backPressedTime = 0;
 
     private FragmentManager fragmentManager;
@@ -52,36 +47,11 @@ public class MainActivityPresenter {
 
     MainActivityPresenter(Context _context, View view, FragmentManager _fragmentManager, ActionBar _actionBar) {
         drawerLayout = (DrawerLayout) view.findViewById(R.id.drawerLayout);
-        drawerLeftMenuListView = (ListView) view.findViewById(R.id.drawer_list_view_left);
-        drawerRightMenuListView = (ListView) view.findViewById(R.id.drawer_list_view_right);
+        ListView drawerLeftMenuListView = (ListView) view.findViewById(R.id.drawer_list_view_left);
+        ListView drawerRightMenuListView = (ListView) view.findViewById(R.id.drawer_list_view_right);
         fragmentManager = _fragmentManager;
         actionBar = _actionBar;
         context = _context;
-
-        actionBarDrawerToggle = new ActionBarDrawerToggle((MainActivity)context, drawerLayout, 0, 0) {
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                lastDrawerView = drawerView;
-            }
-
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-                lastDrawerView = null;
-            }
-
-            public void onDrawerStateChanged(int newState) {
-                if(lastDrawerView != null && newState == DrawerLayout.STATE_SETTLING){
-                    if(drawerLayout.isDrawerOpen(lastDrawerView)){
-                        drawerLayout.closeDrawer(lastDrawerView);
-                        lastDrawerView = null;
-                    }
-                }
-
-                super.onDrawerStateChanged(newState);
-            }
-        };
-
-        drawerLayout.addDrawerListener(actionBarDrawerToggle);
 
         drawerLeftMenuListView.setOnItemClickListener(new ListView.OnItemClickListener() {
             public void onItemClick(AdapterView parent, View view, int position, long id) {
@@ -101,19 +71,84 @@ public class MainActivityPresenter {
         ArrayAdapter<String> rightAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, mainActivityModel.getFilterList());
         drawerRightMenuListView.setAdapter(rightAdapter);
 
-        actionBar.setDisplayShowTitleEnabled(false);
+        initActionBar();
     }
 
-   public void onDestroy(){
+    private void initActionBar(){
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(false);
+        actionBar.setDisplayShowTitleEnabled(false);
+        View actionBarCustomView = LayoutInflater.from(context).inflate(R.layout.main_action_bar, null);
+        SearchView searchView = (SearchView) actionBarCustomView.findViewById(R.id.action_bar_search);
+        searchView.onActionViewExpanded();
+        searchView.clearFocus();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
+            public boolean onQueryTextSubmit(String string) {
+                Fragment currentFragment = fragmentManager.findFragmentById(R.id.fragment_container);
+                if (!currentFragment.getTag().equals("settingFragment")){
+                    BaseListFragment baseListFragment = (BaseListFragment) currentFragment;
+
+                    if (baseListFragment != null) {
+                        baseListFragment.setFilterText(string);
+                    }
+                }
+                return false;
+            }
+
+            public boolean onQueryTextChange(String string) {
+                Fragment currentFragment = fragmentManager.findFragmentById(R.id.fragment_container);
+                if (!currentFragment.getTag().equals("settingFragment")){
+                    BaseListFragment baseListFragment = (BaseListFragment) currentFragment;
+
+                    if (baseListFragment != null) {
+                        baseListFragment.setFilterText(string);
+                    }
+                }
+                return false;
+            }
+        });
+
+        ImageButton homeButton = (ImageButton) actionBarCustomView.findViewById(R.id.action_bar_home);
+        homeButton.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View view){
+                if(drawerLayout.isDrawerOpen(Gravity.END)){
+                    drawerLayout.closeDrawer(Gravity.END);
+                }
+
+                if(drawerLayout.isDrawerOpen(Gravity.START)){
+                    drawerLayout.closeDrawer(Gravity.START);
+                }else{
+                    drawerLayout.openDrawer(Gravity.START);
+                }
+            }
+        });
+
+        ImageButton filterButton = (ImageButton) actionBarCustomView.findViewById(R.id.action_bar_filter);
+        filterButton.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View view){
+                if(drawerLayout.isDrawerOpen(Gravity.START)){
+                    drawerLayout.closeDrawer(Gravity.START);
+                }
+
+                if(drawerLayout.isDrawerOpen(Gravity.END)){
+                    drawerLayout.closeDrawer(Gravity.END);
+                }else{
+                    drawerLayout.openDrawer(Gravity.END);
+                }
+            }
+        });
+
+        actionBar.setCustomView(actionBarCustomView);
+    }
+
+    public void onDestroy(){
        context = null;
-       lastDrawerView = null;
        drawerLayout = null;
        fragmentManager = null;
        actionBar = null;
-       drawerLeftMenuListView = null;
-       drawerRightMenuListView = null;
+
        if(readDataTask != null)
-            readDataTask.cancel(true);
+           readDataTask.cancel(true);
     }
 
     void setLoadDataListener(LoadDataListener _loadDataListener){
@@ -169,74 +204,6 @@ public class MainActivityPresenter {
             }
             return "Success";
         }
-    }
-
-    public boolean onCreateOptionsMenu(Menu menu){
-        boolean bDisplayHomeAsUpEnabled = true;
-        boolean bVisibleSearchItem = true;
-        boolean bVisibleFilterItem = true;
-
-        switch (lastMenuItemID) {
-            case R.id.navigation_home:
-                bDisplayHomeAsUpEnabled = true;
-                bVisibleSearchItem = true;
-                bVisibleFilterItem = true;
-                break;
-            case R.id.navigation_like:
-                bDisplayHomeAsUpEnabled = false;
-                bVisibleSearchItem = true;
-                bVisibleFilterItem = false;
-                break;
-            case R.id.navigation_search:
-                bDisplayHomeAsUpEnabled = false;
-                bVisibleSearchItem = true;
-                bVisibleFilterItem = false;
-                break;
-            case R.id.navigation_setting:
-                bDisplayHomeAsUpEnabled = false;
-                bVisibleSearchItem = false;
-                bVisibleFilterItem = false;
-                break;
-        }
-
-        MenuItem searchMenuItem = menu.findItem(R.id.search_menu);
-        MenuItem filterMenuItem = menu.findItem(R.id.filter_menu);
-
-        actionBar.setDisplayHomeAsUpEnabled(bDisplayHomeAsUpEnabled);
-        searchMenuItem.setVisible(bVisibleSearchItem);
-        filterMenuItem.setVisible(bVisibleFilterItem);
-
-        SearchView searchView = (SearchView) searchMenuItem.getActionView();
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
-            public boolean onQueryTextSubmit(String string) {
-                Fragment currentFragment = fragmentManager.findFragmentById(R.id.fragment_container);
-                if (!currentFragment.getTag().equals("settingFragment")){
-                    BaseListFragment baseListFragment = (BaseListFragment) currentFragment;
-
-                    if (baseListFragment != null) {
-                        baseListFragment.setFilterText(string);
-                    }
-                }
-                return false;
-            }
-
-            public boolean onQueryTextChange(String string) {
-                Fragment currentFragment = fragmentManager.findFragmentById(R.id.fragment_container);
-                if (!currentFragment.getTag().equals("settingFragment")){
-                    BaseListFragment baseListFragment = (BaseListFragment) currentFragment;
-
-                    if (baseListFragment != null) {
-                        baseListFragment.setFilterText(string);
-                    }
-                }
-                return false;
-            }
-        });
-
-        if(invalidataOptionMenuListener != null)
-            invalidataOptionMenuListener.onInvalidateOptionsMenu();
-
-        return true;
     }
 
     public void addFragment(String tag, boolean bChange, boolean bAddBackStack) {
@@ -327,30 +294,6 @@ public class MainActivityPresenter {
         }
 
         return null;
-    }
-
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.search_menu) {
-            return true;
-        }else if(item.getItemId() == R.id.filter_menu) {
-            if(drawerLayout.isDrawerOpen(drawerRightMenuListView)) {
-                drawerLayout.closeDrawer(drawerRightMenuListView);
-            }else {
-                drawerLayout.openDrawer(drawerRightMenuListView);
-            }
-
-            return true;
-        }else {
-            return actionBarDrawerToggle.onOptionsItemSelected(item);
-        }
-    }
-
-    protected void onPostCreate(Bundle savedInstanceState) {
-        actionBarDrawerToggle.syncState();
-    }
-
-    public void onConfigurationChanged(Configuration newConfig) {
-        actionBarDrawerToggle.onConfigurationChanged(newConfig);
     }
 
     public void openItemWebView(FragmentManager fragmentManager, String itemUrl){

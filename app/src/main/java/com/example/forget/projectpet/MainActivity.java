@@ -31,7 +31,6 @@ public class MainActivity extends AppCompatActivity implements InvalidataOptionM
         drawerRightMenuListView.addHeaderView(getLayoutInflater().inflate(R.layout.right_drawer_menu_header, null, false));
 
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_home_black_24dp);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         BottomNavigationView navigationView = (BottomNavigationView) findViewById(R.id.navigation);
         navigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -53,27 +52,6 @@ public class MainActivity extends AppCompatActivity implements InvalidataOptionM
         super.onDestroy();
         mainActivityPresenter.onDestroy();
         mainActivityPresenter = null;
-    }
-
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.action_bar, menu);
-        return mainActivityPresenter.onCreateOptionsMenu(menu);
-    }
-
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        mainActivityPresenter.onPostCreate(savedInstanceState);
-    }
-
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        mainActivityPresenter.onConfigurationChanged(newConfig);
-    }
-
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (mainActivityPresenter.onOptionsItemSelected(item))
-            return true;
-        return super.onOptionsItemSelected(item);
     }
 
     public void openItemWebView(String itemUrl){
