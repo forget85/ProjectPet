@@ -7,9 +7,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.support.annotation.Nullable;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -27,7 +30,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 
-public class MainActivityPresenter {
+public class MainActivityPresenter implements TextWatcher{
     private LoadDataListener loadDataListener;
     private InvalidataOptionMenuListener invalidataOptionMenuListener;
     private MenuItemCheckListener menuItemCheckListener;
@@ -79,34 +82,8 @@ public class MainActivityPresenter {
         actionBar.setDisplayHomeAsUpEnabled(false);
         actionBar.setDisplayShowTitleEnabled(false);
         View actionBarCustomView = LayoutInflater.from(context).inflate(R.layout.main_action_bar, null);
-        SearchView searchView = (SearchView) actionBarCustomView.findViewById(R.id.action_bar_search);
-        searchView.onActionViewExpanded();
-        searchView.clearFocus();
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
-            public boolean onQueryTextSubmit(String string) {
-                Fragment currentFragment = fragmentManager.findFragmentById(R.id.fragment_container);
-                if (!currentFragment.getTag().equals("settingFragment")){
-                    BaseListFragment baseListFragment = (BaseListFragment) currentFragment;
-
-                    if (baseListFragment != null) {
-                        baseListFragment.setFilterText(string);
-                    }
-                }
-                return false;
-            }
-
-            public boolean onQueryTextChange(String string) {
-                Fragment currentFragment = fragmentManager.findFragmentById(R.id.fragment_container);
-                if (!currentFragment.getTag().equals("settingFragment")){
-                    BaseListFragment baseListFragment = (BaseListFragment) currentFragment;
-
-                    if (baseListFragment != null) {
-                        baseListFragment.setFilterText(string);
-                    }
-                }
-                return false;
-            }
-        });
+        ClearEditText clearEditText = (ClearEditText) actionBarCustomView.findViewById(R.id.action_bar_search);
+        clearEditText.addTextChangedListener(this);
 
         ImageButton homeButton = (ImageButton) actionBarCustomView.findViewById(R.id.action_bar_home);
         homeButton.setOnClickListener(new View.OnClickListener(){
@@ -173,6 +150,21 @@ public class MainActivityPresenter {
             System.out.println(exception.toString());
         }
     }
+
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+        Fragment currentFragment = fragmentManager.findFragmentById(R.id.fragment_container);
+        if (!currentFragment.getTag().equals("settingFragment")){
+            BaseListFragment baseListFragment = (BaseListFragment) currentFragment;
+
+            if (baseListFragment != null) {
+                baseListFragment.setFilterText(s.toString());
+            }
+        }
+    }
+
+    public void afterTextChanged(Editable s) {}
 
     private class ReadDataTask extends AsyncTask<String, String, String> {
         protected String doInBackground(String... params) {
@@ -245,8 +237,40 @@ public class MainActivityPresenter {
                 loadDataListener.onFinishLoad(mainActivityModel.getListItems());
         }
 
-        if(invalidataOptionMenuListener != null)
-            invalidataOptionMenuListener.onInvalidateOptionsMenu();
+        recalcActionBarLayout(tag);
+    }
+
+    private void recalcActionBarLayout(String tag){
+        boolean bShowHome = false;
+        boolean bShowLogo = true;
+        boolean bShowSearchBar = false;
+        boolean bShowFilter = false;
+        if(tag.equals("listFragment")){
+            bShowHome = true;
+            bShowFilter = true;
+            bShowSearchBar = true;
+        }else if(tag.equals("likeFragment")){
+            bShowHome = false;
+            bShowFilter = false;
+            bShowSearchBar = true;
+        }else if(tag.equals("searchFragment")){
+            bShowHome = false;
+            bShowFilter = false;
+            bShowSearchBar = true;
+        }else if(tag.equals("settingFragment")){
+            bShowHome = false;
+            bShowFilter = false;
+            bShowSearchBar = false;
+        }
+
+        View customView = actionBar.getCustomView();
+        ImageButton homeButton = (ImageButton) customView.findViewById(R.id.action_bar_home);
+        ClearEditText searchEditText = (ClearEditText) customView.findViewById(R.id.action_bar_search);
+        ImageButton filterButton = (ImageButton) customView.findViewById(R.id.action_bar_filter);
+
+        homeButton.setVisibility(bShowHome ? View.VISIBLE : View.GONE);
+        filterButton.setVisibility(bShowFilter ? View.VISIBLE : View.GONE);
+        searchEditText.setVisibility(bShowSearchBar ? View.VISIBLE : View.GONE);
     }
 
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
