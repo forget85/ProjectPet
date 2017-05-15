@@ -18,6 +18,7 @@ class MainActivityModel {
     void initCategoryList() {
         categoryList.clear();
 
+        categoryList.add("전체");
         categoryList.add("사료");
         categoryList.add("간식");
         categoryList.add("영양제");

@@ -1,6 +1,8 @@
 package com.example.forget.projectpet;
 
 import android.content.Context;
+import android.graphics.Rect;
+import android.os.IBinder;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
@@ -8,31 +10,58 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-public class ClearEditText extends RelativeLayout {
+public class SearchEditText extends RelativeLayout {
     private TextWatcher textWatcher;
     private EditText editText;
     private ImageButton clearButton;
 
-    public ClearEditText(Context context){
+    public SearchEditText(Context context){
         this(context, null);
     }
 
-    public ClearEditText(Context context, AttributeSet attrs){
+    public SearchEditText(Context context, AttributeSet attrs){
         this(context, attrs, 0);
     }
 
-    public ClearEditText(Context context, AttributeSet attrs, int defStyle){
+    public SearchEditText(Context context, AttributeSet attrs, int defStyle){
         super(context, attrs, defStyle);
         init();
     }
 
+    public boolean hasFocus() {
+        if(editText.hasFocus() || clearButton.hasFocus())
+            return true;
+
+        return false;
+    }
+
+    public void clearFocus() {
+        editText.clearFocus();
+        clearButton.clearFocus();
+    }
+
+    public IBinder getWindowToken() {
+        return editText.getWindowToken();
+    }
+
+    public boolean isIn(int x, int y){
+        Rect editTextRect = new Rect();
+        Rect clearButtonRect = new Rect();
+        editText.getGlobalVisibleRect(editTextRect);
+        clearButton.getGlobalVisibleRect(clearButtonRect);
+        if (editTextRect.contains(x, y) || clearButtonRect.contains(x, y)){
+            return true;
+        }
+
+        return false;
+    }
+
     public void init(){
-        inflate(getContext(), R.layout.clear_edit_text, this);
-        editText = (EditText) findViewById(R.id.clear_edit_text_text);
-        clearButton = (ImageButton) findViewById(R.id.clear_edit_text_clear);
+        inflate(getContext(), R.layout.search_edit_text, this);
+        editText = (EditText) findViewById(R.id.search_edit_text_text);
+        clearButton = (ImageButton) findViewById(R.id.search_edit_text_clear);
         clearButton.setVisibility(View.INVISIBLE);
 
         editText.addTextChangedListener(new TextWatcher() {
@@ -71,6 +100,7 @@ public class ClearEditText extends RelativeLayout {
                         visible = View.VISIBLE;
                     }
                 }
+
                 clearButton.setVisibility(visible);
             }
         });
@@ -78,7 +108,6 @@ public class ClearEditText extends RelativeLayout {
         clearButton.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v) {
                 editText.setText(null);
-
             }
         });
     }

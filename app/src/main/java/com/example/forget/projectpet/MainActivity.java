@@ -1,15 +1,14 @@
 package com.example.forget.projectpet;
 
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.widget.ListView;
 
-public class MainActivity extends AppCompatActivity implements InvalidataOptionMenuListener, MenuItemCheckListener{
+public class MainActivity extends AppCompatActivity implements MenuItemCheckListener{
     MainActivityPresenter mainActivityPresenter;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,14 +37,19 @@ public class MainActivity extends AppCompatActivity implements InvalidataOptionM
                 return mainActivityPresenter.onNavigationItemSelected(item);
             }
         });
+
     }
 
     private void initPresenter(){
         mainActivityPresenter = new MainActivityPresenter(this, getWindow().getDecorView(), getFragmentManager(), getSupportActionBar());
-        mainActivityPresenter.setInvalidataOptionMenuListener(this);
         mainActivityPresenter.setMenuItemCheckListener(this);
         mainActivityPresenter.readData();
         mainActivityPresenter.addFragment("listFragment", false, false);
+    }
+
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        mainActivityPresenter.dispatchTouchEvent(event);
+        return super.dispatchTouchEvent( event );
     }
 
     protected void onDestroy() {
@@ -68,10 +72,6 @@ public class MainActivity extends AppCompatActivity implements InvalidataOptionM
 
     public void reloadItems(){
         mainActivityPresenter.readData();
-    }
-
-    public void onInvalidateOptionsMenu() {
-        invalidateOptionsMenu();
     }
 
     public void onCheckItem(int menuID) {

@@ -19,7 +19,7 @@
         android:layout_marginLeft="10dp"
         android:background="@mipmap/ic_launcher_round"/>
 
-    <com.example.forget.projectpet.ClearEditText
+    <com.example.forget.projectpet.SearchEditText
         android:id="@+id/action_bar_search"
         android:layout_weight="1"
         android:layout_width="0dp"

@@ -7,16 +7,16 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.support.annotation.Nullable;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.widget.SearchView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
@@ -32,7 +32,6 @@ import java.net.URL;
 
 public class MainActivityPresenter implements TextWatcher{
     private LoadDataListener loadDataListener;
-    private InvalidataOptionMenuListener invalidataOptionMenuListener;
     private MenuItemCheckListener menuItemCheckListener;
 
     private int lastMenuItemID = R.id.navigation_home;
@@ -47,6 +46,8 @@ public class MainActivityPresenter implements TextWatcher{
 
     private static final int FINISH_INTERVAL_TIME = 2000;
     private static final int MAX_FRAGMENT_MANAGER_BACK_STACK_SIZE = 10;
+
+    private SearchEditText searchEditText;
 
     MainActivityPresenter(Context _context, View view, FragmentManager _fragmentManager, ActionBar _actionBar) {
         drawerLayout = (DrawerLayout) view.findViewById(R.id.drawerLayout);
@@ -82,7 +83,7 @@ public class MainActivityPresenter implements TextWatcher{
         actionBar.setDisplayHomeAsUpEnabled(false);
         actionBar.setDisplayShowTitleEnabled(false);
         View actionBarCustomView = LayoutInflater.from(context).inflate(R.layout.main_action_bar, null);
-        ClearEditText clearEditText = (ClearEditText) actionBarCustomView.findViewById(R.id.action_bar_search);
+        SearchEditText clearEditText = (SearchEditText) actionBarCustomView.findViewById(R.id.action_bar_search);
         clearEditText.addTextChangedListener(this);
 
         ImageButton homeButton = (ImageButton) actionBarCustomView.findViewById(R.id.action_bar_home);
@@ -119,21 +120,18 @@ public class MainActivityPresenter implements TextWatcher{
     }
 
     public void onDestroy(){
-       context = null;
-       drawerLayout = null;
-       fragmentManager = null;
-       actionBar = null;
+        context = null;
+        drawerLayout = null;
+        fragmentManager = null;
+        actionBar = null;
+        searchEditText= null;
 
-       if(readDataTask != null)
-           readDataTask.cancel(true);
+        if(readDataTask != null)
+            readDataTask.cancel(true);
     }
 
     void setLoadDataListener(LoadDataListener _loadDataListener){
         loadDataListener = _loadDataListener;
-    }
-
-    void setInvalidataOptionMenuListener(InvalidataOptionMenuListener _invalidataOptionMenuListener){
-        invalidataOptionMenuListener = _invalidataOptionMenuListener;
     }
 
     void setMenuItemCheckListener(MenuItemCheckListener _menuItemCheckListener){
@@ -265,12 +263,27 @@ public class MainActivityPresenter implements TextWatcher{
 
         View customView = actionBar.getCustomView();
         ImageButton homeButton = (ImageButton) customView.findViewById(R.id.action_bar_home);
-        ClearEditText searchEditText = (ClearEditText) customView.findViewById(R.id.action_bar_search);
+        searchEditText = (SearchEditText) customView.findViewById(R.id.action_bar_search);
         ImageButton filterButton = (ImageButton) customView.findViewById(R.id.action_bar_filter);
 
         homeButton.setVisibility(bShowHome ? View.VISIBLE : View.GONE);
         filterButton.setVisibility(bShowFilter ? View.VISIBLE : View.GONE);
         searchEditText.setVisibility(bShowSearchBar ? View.VISIBLE : View.GONE);
+    }
+
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            if(searchEditText.isShown() && searchEditText.hasFocus()) {
+                if (!searchEditText.isIn((int) event.getRawX(), (int) event.getRawY())) {
+                    searchEditText.clearFocus();
+                    InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(searchEditText.getWindowToken(), 0);
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {

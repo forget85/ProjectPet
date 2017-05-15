@@ -25,5 +25,7 @@ public class SplashActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         handler.removeCallbacks(runnable);
+        runnable = null;
+        handler = null;
     }
 }
