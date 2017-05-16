@@ -32,7 +32,7 @@ class ListViewHolder extends RecyclerView.ViewHolder{
         freeShippingTextView = (TextView) itemView.findViewById(R.id.free_shipping_text_view);
         likeImageView = (ImageView) itemView.findViewById(R.id.like_image_button_view);
         productTextView = (TextView) itemView.findViewById(R.id.product_name_text_view);
-        shoppingMallTextView = (TextView) itemView.findViewById(R.id.shopping_mall_name_text_view);
+        //shoppingMallTextView = (TextView) itemView.findViewById(R.id.shopping_mall_name_text_view);
         priceTextView = (TextView) itemView.findViewById(R.id.price_text_view);
     }
 
@@ -40,7 +40,7 @@ class ListViewHolder extends RecyclerView.ViewHolder{
         Glide.with(context).load(listItem.getImageUrl()).into(productImageView);
         priceTextView.setText(listItem.getCost());
         productTextView.setText(listItem.getProductName());
-        shoppingMallTextView.setText(listItem.getShoppingMallName());
+        //shoppingMallTextView.setText(listItem.getShoppingMallName());
         updateOnClickListener(context, listItem);
     }
 
