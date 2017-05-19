@@ -55,7 +55,6 @@ public class MainActivity extends AppCompatActivity implements MenuItemCheckList
     protected void onDestroy() {
         super.onDestroy();
         mainActivityPresenter.onDestroy();
-        mainActivityPresenter = null;
     }
 
     public void openItemWebView(String itemUrl){

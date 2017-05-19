@@ -6,14 +6,18 @@ import android.os.IBinder;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 public class SearchEditText extends RelativeLayout {
-    private TextWatcher textWatcher;
+    private TextView.OnEditorActionListener onEditorActionListener;
+    private OnFocusChangeListener onFocusChangeListener;
     private EditText editText;
     private ImageButton clearButton;
 
@@ -64,12 +68,20 @@ public class SearchEditText extends RelativeLayout {
         clearButton = (ImageButton) findViewById(R.id.search_edit_text_clear);
         clearButton.setVisibility(View.INVISIBLE);
 
-        editText.addTextChangedListener(new TextWatcher() {
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                if(textWatcher != null){
-                    textWatcher.beforeTextChanged(s, start, count, after);
+        editText.setOnEditorActionListener(new TextView.OnEditorActionListener(){
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                switch (actionId){
+                    case EditorInfo.IME_ACTION_SEARCH:
+                        if(onEditorActionListener != null)
+                            onEditorActionListener.onEditorAction(v, actionId, event);
+                        return true;
                 }
+                return false;
             }
+        });
+
+        editText.addTextChangedListener(new TextWatcher() {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (hasFocus()) {
@@ -79,17 +91,9 @@ public class SearchEditText extends RelativeLayout {
                     }
                     clearButton.setVisibility(visible);
                 }
-
-                if(textWatcher != null){
-                    textWatcher.onTextChanged(s, start, before, count);
-                }
             }
 
-            public void afterTextChanged(Editable s) {
-                if(textWatcher != null){
-                    textWatcher.afterTextChanged(s);
-                }
-            }
+            public void afterTextChanged(Editable s) {}
         });
 
         editText.setOnFocusChangeListener(new View.OnFocusChangeListener(){
@@ -102,17 +106,27 @@ public class SearchEditText extends RelativeLayout {
                 }
 
                 clearButton.setVisibility(visible);
+
+                if(onFocusChangeListener != null){
+                    onFocusChangeListener.onFocusChange(view, hasFocus);
+                }
             }
         });
 
         clearButton.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v) {
                 editText.setText(null);
+                if(onEditorActionListener != null)
+                    onEditorActionListener.onEditorAction(editText, EditorInfo.IME_ACTION_SEARCH, null);
             }
         });
     }
 
-    public void addTextChangedListener(TextWatcher _textWatcher){
-        textWatcher = _textWatcher;
+    public void setOnEditorActionListener(TextView.OnEditorActionListener _onEditorActionListener){
+        onEditorActionListener = _onEditorActionListener;
+    }
+
+    public void setOnFocusChangeListener(OnFocusChangeListener _onFocusChangeListener){
+        onFocusChangeListener = _onFocusChangeListener;
     }
 }

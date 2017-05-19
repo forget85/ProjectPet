@@ -7,11 +7,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -21,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONValue;
@@ -30,7 +31,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 
-public class MainActivityPresenter implements TextWatcher{
+public class MainActivityPresenter{
     private LoadDataListener loadDataListener;
     private MenuItemCheckListener menuItemCheckListener;
 
@@ -83,14 +84,42 @@ public class MainActivityPresenter implements TextWatcher{
         actionBar.setDisplayHomeAsUpEnabled(false);
         actionBar.setDisplayShowTitleEnabled(false);
         View actionBarCustomView = LayoutInflater.from(context).inflate(R.layout.main_action_bar, null);
-        SearchEditText clearEditText = (SearchEditText) actionBarCustomView.findViewById(R.id.action_bar_search);
-        clearEditText.addTextChangedListener(this);
+        SearchEditText searchEditText = (SearchEditText) actionBarCustomView.findViewById(R.id.action_bar_search);
+        searchEditText.setOnEditorActionListener(new TextInputEditText.OnEditorActionListener(){
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                Fragment currentFragment = fragmentManager.findFragmentById(R.id.fragment_container);
+                if (!currentFragment.getTag().equals("settingFragment")){
+                    ListFragment listFragment = (ListFragment) currentFragment;
+                    if (listFragment != null) {
+                        listFragment.setFilterText(v.getText().toString());
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+
+        searchEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    if(drawerLayout.isDrawerOpen(Gravity.START)){
+                        drawerLayout.closeDrawer(Gravity.START);
+                    }
+
+                    if(drawerLayout.isDrawerOpen(Gravity.END)){
+                        drawerLayout.closeDrawer(Gravity.END);
+                    }
+                }
+            }
+        });
 
         ImageButton homeButton = (ImageButton) actionBarCustomView.findViewById(R.id.action_bar_home);
         homeButton.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view){
                 if(drawerLayout.isDrawerOpen(Gravity.END)){
                     drawerLayout.closeDrawer(Gravity.END);
+                }else if(drawerLayout.isDrawerVisible(Gravity.END)){
+                    return;
                 }
 
                 if(drawerLayout.isDrawerOpen(Gravity.START)){
@@ -106,6 +135,8 @@ public class MainActivityPresenter implements TextWatcher{
             public void onClick(View view){
                 if(drawerLayout.isDrawerOpen(Gravity.START)){
                     drawerLayout.closeDrawer(Gravity.START);
+                }else if(drawerLayout.isDrawerVisible((Gravity.START))){
+                    return;
                 }
 
                 if(drawerLayout.isDrawerOpen(Gravity.END)){
@@ -121,10 +152,6 @@ public class MainActivityPresenter implements TextWatcher{
 
     public void onDestroy(){
         context = null;
-        drawerLayout = null;
-        fragmentManager = null;
-        actionBar = null;
-        searchEditText= null;
 
         if(readDataTask != null)
             readDataTask.cancel(true);
@@ -148,21 +175,6 @@ public class MainActivityPresenter implements TextWatcher{
             System.out.println(exception.toString());
         }
     }
-
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
-        Fragment currentFragment = fragmentManager.findFragmentById(R.id.fragment_container);
-        if (!currentFragment.getTag().equals("settingFragment")){
-            BaseListFragment baseListFragment = (BaseListFragment) currentFragment;
-
-            if (baseListFragment != null) {
-                baseListFragment.setFilterText(s.toString());
-            }
-        }
-    }
-
-    public void afterTextChanged(Editable s) {}
 
     private class ReadDataTask extends AsyncTask<String, String, String> {
         protected String doInBackground(String... params) {
@@ -226,9 +238,17 @@ public class MainActivityPresenter implements TextWatcher{
         fragmentTransaction.commit();
 
         if(tag.equals("listFragment")) {
-            ListFragment listFragment = (ListFragment)fragment;
+            ProductListFragment listFragment = (ProductListFragment)fragment;
             if(listFragment != null){
                 setLoadDataListener(listFragment);
+            }
+
+            if (loadDataListener != null)
+                loadDataListener.onFinishLoad(mainActivityModel.getListItems());
+        } else if(tag.equals("searchFragment")) {
+            SearchFragment searchFragment = (SearchFragment)fragment;
+            if(searchFragment != null){
+                setLoadDataListener(searchFragment);
             }
 
             if (loadDataListener != null)
@@ -321,7 +341,7 @@ public class MainActivityPresenter implements TextWatcher{
 
     private Fragment createFragment(String tag){
         if(tag.equals("listFragment")){
-            return new ListFragment();
+            return new ProductListFragment();
         }else if(tag.equals("likeFragment")){
             return new LikeFragment();
         }else if(tag.equals("searchFragment")){

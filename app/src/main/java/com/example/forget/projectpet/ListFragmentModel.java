@@ -2,7 +2,7 @@ package com.example.forget.projectpet;
 
 import java.util.ArrayList;
 
-public class BaseListFragmentModel {
+public class ListFragmentModel {
     private ArrayList<ListItem> listItems = new ArrayList<>();
 
     ArrayList<ListItem> getData(){

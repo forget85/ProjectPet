@@ -56,15 +56,22 @@ class ListViewHolder extends RecyclerView.ViewHolder{
 }
 
 public class ListViewAdapter extends RecyclerView.Adapter<ListViewHolder> implements Filterable{
+    private boolean bSearchListView = false;
+
     private class ListFilter extends Filter{
         protected FilterResults performFiltering(CharSequence constraint) {
             FilterResults filterResults = new FilterResults();
 
+            ArrayList<ListItem> filterItemLists = new ArrayList<>();
             if(constraint == null || constraint.length() == 0){
-                filterResults.values = listItems;
-                filterResults.count = listItems.size();
+                if(bSearchListView){
+                    filterResults.values = filterItemLists;
+                    filterResults.count = 0;
+                }else {
+                    filterResults.values = listItems;
+                    filterResults.count = listItems.size();
+                }
             }else{
-                ArrayList<ListItem> filterItemLists = new ArrayList<>();
                 for(ListItem listItem : listItems){
                     if(listItem.getProductName().toUpperCase().contains(constraint.toString().toUpperCase())){
                         filterItemLists.add(listItem);
@@ -82,6 +89,8 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewHolder> implem
             listViewItems = (ArrayList<ListItem>) results.values;
             if(0 < results.count){
                 notifyDataSetChanged();
+            }else if(bSearchListView){
+                notifyDataSetChanged();
             }
         }
     }
@@ -95,6 +104,10 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewHolder> implem
 
     ListViewAdapter(Context _context) {
         context = _context;
+    }
+
+    public void setSearchListView(boolean _bSearchListView){
+        bSearchListView = _bSearchListView;
     }
 
     public void updateData(ArrayList<ListItem> _listItems) {

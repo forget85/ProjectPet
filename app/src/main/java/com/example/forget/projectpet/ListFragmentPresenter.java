@@ -6,23 +6,27 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import java.util.ArrayList;
 
-public class BaseListFragmentPresenter {
-    private ListViewAdapter listViewAdapter;
+public class ListFragmentPresenter {
+    protected ListViewAdapter listViewAdapter;
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private BaseListFragmentModel baseListFragmentModel = new BaseListFragmentModel();
+    private ListFragmentModel listFragmentModel = new ListFragmentModel();
 
     void Attach(Context _context, RecyclerView _recyclerView, SwipeRefreshLayout _swipeRefreshLayout){
-        listViewAdapter = new ListViewAdapter(_context);
         recyclerView = _recyclerView;
         swipeRefreshLayout = _swipeRefreshLayout;
+        createListViewAdapter(_context);
         recyclerView.setAdapter(listViewAdapter);
         updateList();
     }
 
+    void createListViewAdapter(Context _context){
+        listViewAdapter = new ListViewAdapter(_context);
+    }
+
     void updateList(){
         if(listViewAdapter != null) {
-            listViewAdapter.updateData(baseListFragmentModel.getData());
+            listViewAdapter.updateData(listFragmentModel.getData());
             listViewAdapter.notifyDataSetChanged();
         }
     }
@@ -32,7 +36,7 @@ public class BaseListFragmentPresenter {
     }
 
     public void setListItems(ArrayList<ListItem> listItem){
-        baseListFragmentModel.setListItems(listItem);
+        listFragmentModel.setListItems(listItem);
     }
 
     public void onRefreshList(Activity activity){
@@ -47,9 +51,5 @@ public class BaseListFragmentPresenter {
         if(recyclerView.getAdapter() != null){
             recyclerView.setAdapter(null);
         }
-
-        swipeRefreshLayout = null;
-        recyclerView = null;
-        baseListFragmentModel = null;
     }
 }

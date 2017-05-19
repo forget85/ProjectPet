@@ -8,13 +8,9 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-public class SearchFragment extends ListFragment implements LoadDataListener {
+public class ProductListFragment extends ListFragment implements LoadDataListener {
     public void onFinishLoad(ArrayList<ListItem> listItems) {
         setListitems(listItems);
-    }
-
-    public ListFragmentPresenter createListFragmentPresenter(){
-        return new SearchFragmentPresenter();
     }
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
