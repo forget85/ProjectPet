@@ -1,15 +1,15 @@
 package com.example.forget.projectpet;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ListFragmentModel {
-    private ArrayList<ListItem> listItems = new ArrayList<>();
+    private HashMap<String, ListItem> listItems;
 
-    ArrayList<ListItem> getData(){
+    HashMap<String, ListItem> getData(){
         return listItems;
     }
 
-    public void setListItems(ArrayList<ListItem> _listItems){
+    public void setListItems(HashMap<String, ListItem> _listItems){
         listItems = _listItems;
     }
 }

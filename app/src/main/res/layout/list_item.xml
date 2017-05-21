@@ -33,6 +33,7 @@
             android:textSize="15dp"
             android:text="할인"/>
 
+        <!-- 현재 무료 배송 정보를 알 수 없기 때문에 보류-->
         <TextView
             android:id="@+id/free_shipping_text_view"
             android:layout_width="wrap_content"
@@ -44,13 +45,14 @@
             android:gravity="center_vertical"
             android:textColor="#FFFFFF"
             android:textSize="15dp"
+            android:visibility="gone"
             android:text="무료배송"/>
 
         <ImageButton
             android:id="@+id/like_image_button_view"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:background="@drawable/ic_pet_48dp"
+            android:background="@drawable/like_button_on_off"
             android:layout_alignRight="@+id/product_image_view"
             android:layout_alignTop="@+id/product_image_view"/>
 
@@ -63,8 +65,8 @@
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="10dp"
+                android:layout_height="0dp"
+                android:textSize="0dp"
                 android:text="브랜드"/>
 
             <TextView
@@ -80,13 +82,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="원가"
-                android:textSize="10dp" />
+                android:textSize="11dp" />
 
             <TextView
                 android:id="@+id/price_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="17dp"
+                android:textSize="19dp"
                 android:textStyle="bold"
                 android:layout_marginBottom="10dp"
                 android:text="판매 가격"/>
@@ -97,7 +99,7 @@
                 android:layout_height="wrap_content"
                 android:text="쇼핑몰"
                 android:layout_marginBottom="5dp"
-                android:textSize="10dp" />
+                android:textSize="11dp" />
 
         </LinearLayout>
     </RelativeLayout>

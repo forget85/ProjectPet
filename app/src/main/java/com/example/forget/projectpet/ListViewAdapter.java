@@ -14,15 +14,17 @@ import com.bumptech.glide.Glide;
 
 import junit.framework.Assert;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 class ListViewHolder extends RecyclerView.ViewHolder{
-    public ImageView    productImageView;
-    public TextView     saleTextView;
-    public TextView     freeShippingTextView;
-    public ImageView    likeImageView;
-    public TextView     productTextView;
-    public TextView     shoppingMallTextView;
-    public TextView     priceTextView;
+    private ImageView    productImageView;
+    private TextView     saleTextView;
+    private TextView     freeShippingTextView;
+    private ImageView    likeImageView;
+    private TextView     productTextView;
+    private TextView     shoppingMallTextView;
+    private TextView     priceTextView;
 
     ListViewHolder(View itemView){
         super(itemView);
@@ -52,19 +54,27 @@ class ListViewHolder extends RecyclerView.ViewHolder{
         };
         productImageView.setOnClickListener(moveItemPageListner);
         productTextView.setOnClickListener(moveItemPageListner);
+        likeImageView.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v) {
+                ((MainActivity)context).onChangeLikeItem(true, listItem);
+            }
+        });
     }
 }
 
 public class ListViewAdapter extends RecyclerView.Adapter<ListViewHolder> implements Filterable{
-    private boolean bSearchListView = false;
+    public static final int TYPE_DEFAULT = 0;
+    public static final int TYPE_SEARCH = 1;
+
+    int listViewType = TYPE_DEFAULT;
 
     private class ListFilter extends Filter{
         protected FilterResults performFiltering(CharSequence constraint) {
             FilterResults filterResults = new FilterResults();
 
-            ArrayList<ListItem> filterItemLists = new ArrayList<>();
+            HashMap<String, ListItem> filterItemLists = new HashMap<>();
             if(constraint == null || constraint.length() == 0){
-                if(bSearchListView){
+                if(listViewType == TYPE_SEARCH){
                     filterResults.values = filterItemLists;
                     filterResults.count = 0;
                 }else {
@@ -72,9 +82,10 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewHolder> implem
                     filterResults.count = listItems.size();
                 }
             }else{
-                for(ListItem listItem : listItems){
+                for(Map.Entry<String, ListItem> entry : listItems.entrySet()){
+                    ListItem listItem = (ListItem)entry.getValue();
                     if(listItem.getProductName().toUpperCase().contains(constraint.toString().toUpperCase())){
-                        filterItemLists.add(listItem);
+                        filterItemLists.put(entry.getKey(), listItem);
                     }
                 }
 
@@ -86,18 +97,21 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewHolder> implem
         }
 
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            listViewItems = (ArrayList<ListItem>) results.values;
+            listViewItems = (HashMap<String, ListItem>) results.values;
+            updateViewItemKeys();
+
             if(0 < results.count){
                 notifyDataSetChanged();
-            }else if(bSearchListView){
+            }else if(listViewType == TYPE_SEARCH){
                 notifyDataSetChanged();
             }
         }
     }
 
+    HashMap<String, ListItem> listItems = new HashMap<>();
+    HashMap<String, ListItem> listViewItems = new HashMap<>();
+    ArrayList<String> viewItemKeys = new ArrayList<>();
 
-    ArrayList<ListItem> listItems = new ArrayList<>();
-    ArrayList<ListItem> listViewItems = new ArrayList<>();
     Context context;
 
     Filter listFilter;
@@ -106,13 +120,23 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewHolder> implem
         context = _context;
     }
 
-    public void setSearchListView(boolean _bSearchListView){
-        bSearchListView = _bSearchListView;
+    public void setListViewType(int _listViewType){
+        listViewType = _listViewType;
     }
 
-    public void updateData(ArrayList<ListItem> _listItems) {
+    public void updateData(HashMap<String, ListItem> _listItems) {
         listItems = _listItems;
         listViewItems = listItems;
+        updateViewItemKeys();
+    }
+
+    public void updateViewItemKeys(){
+        viewItemKeys.clear();
+        if(listViewItems != null) {
+            for (String Key : listViewItems.keySet()) {
+                viewItemKeys.add(Key);
+            }
+        }
     }
 
     public ListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -122,7 +146,10 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewHolder> implem
     }
 
     public void onBindViewHolder(ListViewHolder holder, int position) {
-        holder.bind(context, listViewItems.get(position));
+        if(viewItemKeys.isEmpty())
+            return;
+
+        holder.bind(context, listViewItems.get(viewItemKeys.get(position)));
     }
 
     public int getItemCount() {

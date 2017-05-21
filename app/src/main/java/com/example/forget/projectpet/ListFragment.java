@@ -10,7 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
     private ListFragmentPresenter listFragmentPresenter = createListFragmentPresenter();
@@ -43,7 +43,7 @@ public class ListFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         listFragmentPresenter.setFilterText(string);
     }
 
-    public void setListitems(ArrayList<ListItem> _listItems){
+    public void setListitems(HashMap<String, ListItem> _listItems){
         listFragmentPresenter.setListItems(_listItems);
         listFragmentPresenter.updateList();
     }

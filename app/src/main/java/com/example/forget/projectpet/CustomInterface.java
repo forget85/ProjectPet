@@ -1,9 +1,9 @@
 package com.example.forget.projectpet;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 interface LoadDataListener {
-    void onFinishLoad(ArrayList<ListItem> listItems);
+    void onFinishLoad(HashMap<String, ListItem> listItems);
 }
 
 interface MenuItemCheckListener{

@@ -62,6 +62,10 @@ public class MainActivity extends AppCompatActivity implements MenuItemCheckList
         mainActivityPresenter.openItemWebView(getFragmentManager(), itemUrl);
     }
 
+    public void onChangeLikeItem(boolean bSelected, ListItem listItem){
+        int a = 0;
+    }
+
     public void onBackPressed() {
         if(!mainActivityPresenter.onBackPressed(getFragmentManager())) {
             super.onBackPressed();

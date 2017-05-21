@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ListFragmentPresenter {
     protected ListViewAdapter listViewAdapter;
@@ -35,7 +35,7 @@ public class ListFragmentPresenter {
         listViewAdapter.getFilter().filter(string);
     }
 
-    public void setListItems(ArrayList<ListItem> listItem){
+    public void setListItems(HashMap<String, ListItem> listItem){
         listFragmentModel.setListItems(listItem);
     }
 

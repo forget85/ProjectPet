@@ -165,6 +165,8 @@ public class MainActivityPresenter{
         menuItemCheckListener = _menuItemCheckListener;
     }
 
+
+
     public void readData() {
         try {
             if(readDataTask == null)
@@ -281,6 +283,8 @@ public class MainActivityPresenter{
             bShowSearchBar = false;
         }
 
+        bShowFilter = false; //필터 기능이 보류되어서 일단 숨김
+
         View customView = actionBar.getCustomView();
         ImageButton homeButton = (ImageButton) customView.findViewById(R.id.action_bar_home);
         searchEditText = (SearchEditText) customView.findViewById(R.id.action_bar_search);
@@ -289,6 +293,7 @@ public class MainActivityPresenter{
         homeButton.setVisibility(bShowHome ? View.VISIBLE : View.GONE);
         filterButton.setVisibility(bShowFilter ? View.VISIBLE : View.GONE);
         searchEditText.setVisibility(bShowSearchBar ? View.VISIBLE : View.GONE);
+        searchEditText.clearText();
     }
 
     public boolean dispatchTouchEvent(MotionEvent event) {
@@ -399,6 +404,7 @@ public class MainActivityPresenter{
         }
 
         Fragment currentFragment = fragmentManager.findFragmentById(R.id.fragment_container);
+        recalcActionBarLayout(currentFragment.getTag());
         menuItemCheckListener.onCheckItem(getNavigationMenuID(currentFragment.getTag()));
     }
 }

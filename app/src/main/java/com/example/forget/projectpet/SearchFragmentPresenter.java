@@ -7,7 +7,7 @@ import android.support.v7.widget.RecyclerView;
 public class SearchFragmentPresenter extends ListFragmentPresenter {
     void createListViewAdapter(Context _context) {
         super.createListViewAdapter(_context);
-        listViewAdapter.setSearchListView(true);
+        listViewAdapter.setListViewType(ListViewAdapter.TYPE_SEARCH);
     }
 
     void Attach(Context _context, RecyclerView _recyclerView, SwipeRefreshLayout _swipeRefreshLayout) {

@@ -9,7 +9,6 @@ import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
@@ -128,5 +127,9 @@ public class SearchEditText extends RelativeLayout {
 
     public void setOnFocusChangeListener(OnFocusChangeListener _onFocusChangeListener){
         onFocusChangeListener = _onFocusChangeListener;
+    }
+
+    public void clearText(){
+        editText.setText(null);
     }
 }

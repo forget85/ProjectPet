@@ -6,10 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ProductListFragment extends ListFragment implements LoadDataListener {
-    public void onFinishLoad(ArrayList<ListItem> listItems) {
+    public void onFinishLoad(HashMap<String, ListItem> listItems) {
         setListitems(listItems);
     }
 
